@@ -1,0 +1,15 @@
+# Preparacion para url amigables
+# carpeta public
+
+<IfModule mod_rewrite.c> 
+#Nos aseguramos que el modulo de reescritura estécargado
+    Options -MultiViews
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-l
+    RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
+
+
+</IfModule>
