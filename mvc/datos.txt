@@ -3,9 +3,9 @@
 -- Contraseña: admin123
 -- =====================================================
 INSERT INTO usuario (nombre, email, password, rol) VALUES
-('Administrador del Sistema', 'admin@inventario.com', '$2y$10$DlIGdhz4JPlLqGoGFwyfrOIXdGx1M3eZ6fPTJZRY8sUWQVOnbe9rW', 'ADMIN'),
-('Operador de Almacén', 'almacen@inventario.com', '$2y$10$DlIGdhz4JPlLqGoGFwyfrOIXdGx1M3eZ6fPTJZRY8sUWQVOnbe9rW', 'ALMACEN'),
-('Usuario Consultor', 'lector@inventario.com', '$2y$10$DlIGdhz4JPlLqGoGFwyfrOIXdGx1M3eZ6fPTJZRY8sUWQVOnbe9rW', 'LECTOR');
+('Administrador del Sistema', 'admin@inventario.com', '$2y$10$gIOUx0mrDvuU//o3txnRX.3DuxDK3bXL4UBxchWYt2yZngWBPUN7K', 'ADMIN'),
+('Operador de Almacén', 'almacen@inventario.com', '$2y$10$gIOUx0mrDvuU//o3txnRX.3DuxDK3bXL4UBxchWYt2yZngWBPUN7K', 'ALMACEN'),
+('Usuario Consultor', 'lector@inventario.com', '$2y$10$gIOUx0mrDvuU//o3txnRX.3DuxDK3bXL4UBxchWYt2yZngWBPUN7K', 'LECTOR');
 
 -- =====================================================
 -- Datos de Ejemplo: Marcas

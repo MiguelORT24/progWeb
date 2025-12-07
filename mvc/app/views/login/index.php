@@ -54,16 +54,20 @@
             </div>
         <?php endif; ?>
 
-        <form action="<?php echo URLROOT; ?>/login/entrar" method="POST">
+        <form action="<?php echo URLROOT; ?>/login/entrar" method="POST" onsubmit="return validar();">
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email" 
-                       value="<?php echo $data['email'] ?? ''; ?>" required autofocus>
+                       value="<?php echo $data['email'] ?? ''; ?>" placeholder="ejemplo@correo.com" required autofocus>
+                <small class="text-muted">Formato: usuario@dominio.com</small>
             </div>
 
             <div class="mb-3">
                 <label for="password" class="form-label">Contraseña</label>
                 <input type="password" class="form-control" id="password" name="password" required>
+                <small class="text-muted d-block mt-1">
+                    Req: 8-16 caracteres, mayúscula, minúscula, número y especial.
+                </small>
             </div>
 
             <button type="submit" class="btn btn-primary btn-login w-100">Iniciar Sesión</button>
@@ -72,13 +76,45 @@
         <div class="mt-4 text-center">
             <small class="text-muted">
                 <strong>Usuarios de prueba:</strong><br>
-                admin@inventario.com / admin123<br>
-                almacen@inventario.com / admin123<br>
-                lector@inventario.com / admin123
+                admin@inventario.com / Admin123!<br>
+                almacen@inventario.com / Admin123!<br>
+                lector@inventario.com / Admin123!
             </small>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function validar(){
+            let email = document.getElementById('email');
+            let password = document.getElementById('password');
+            
+            // Validar Email
+            let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if(email.value == '' || !emailRegex.test(email.value)){
+                alert('El correo electrónico no es válido.');
+                email.focus();
+                return false;
+            }
+
+            // Validar Password
+            // Mínimo 8, máx 16, 1 mayúscula, 1 minúscula, 1 número, 1 especial, sin espacios
+            let passRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/;
+            
+            /* 
+               NOTA: Para propósitos de este ejercicio, validamos estrictamente.
+               Si estás usando los usuarios de prueba originales ('admin123'), 
+               esta validación FALLARÁ porque no cumplen los requisitos.
+               Considera actualizar tus usuarios en la BD.
+            */
+            if(password.value == '' || !passRegex.test(password.value)){
+                alert('La contraseña no cumple con los requisitos de seguridad:\n\n- Entre 8 y 16 caracteres\n- Al menos una letra mayúscula\n- Al menos una letra minúscula\n- Al menos un número\n- Al menos un carácter especial\n- No se permiten espacios');
+                password.focus();
+                return false;
+            }
+
+            return true; 
+        }
+    </script>
 </body>
 </html>
