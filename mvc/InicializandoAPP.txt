@@ -1,3 +1,16 @@
+
+----------------------------------------------------
+El único requisito implícito es que el usuario sepa 
+dónde poner el código fuente (la carpeta mvc).
+
+La configuración del Virtual Host apunta a C:/xampp/htdocs/progWeb/mvc/public.
+Si el usuario descomprime tu código en esa ruta exacta, funcionará a la primera.
+Si el usuario lo pone en otra carpeta, solo tendría que 
+ajustar la ruta en el Paso 1 (DocumentRoot) del VHOST,
+----------------------------------------------------
+
+
+
 # Configuración del Virtual Host para Sistema de Inventarios
 
 ## Paso 1: Configurar el Virtual Host en Apache
