@@ -64,7 +64,6 @@
                                     <tr>
                                         <th>SKU</th>
                                         <th>Producto</th>
-                                        <th>Ubicación</th>
                                         <th class="text-center">Cantidad</th>
                                     </tr>
                                 </thead>
@@ -73,7 +72,6 @@
                                         <tr>
                                             <td><span class="badge bg-secondary"><?php echo $lote['sku']; ?></span></td>
                                             <td><?php echo substr($lote['equipo_descripcion'], 0, 30); ?></td>
-                                            <td><?php echo $lote['ubicacion_nombre']; ?></td>
                                             <td class="text-center"><span class="badge bg-danger"><?php echo $lote['cantidad']; ?></span></td>
                                         </tr>
                                     <?php endforeach; ?>

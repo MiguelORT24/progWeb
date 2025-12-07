@@ -300,10 +300,25 @@ class InventarioLote {
     /**
      * Lotes con stock bajo (menos de 5 unidades disponibles)
      */
-    public function stockBajo($limite = 5) {
-        $sql = "SELECT * FROM vista_inventario_completo 
-                WHERE estado = 'DISPONIBLE' AND cantidad <= :limite
+    public function stockBajo($limite = 10) {
+        $sql = "SELECT 
+                    e.id_equipo,
+                    e.sku,
+                    e.tipo,
+                    e.descripcion AS equipo_descripcion,
+                    m.nombre AS marca_nombre,
+                    c.nombre AS categoria_nombre,
+                    SUM(il.cantidad) AS cantidad,
+                    MIN(il.fecha_ingreso) AS fecha_ingreso
+                FROM inventario_lote il
+                INNER JOIN equipo e ON il.id_equipo = e.id_equipo
+                LEFT JOIN marca m ON e.id_marca = m.id_marca
+                LEFT JOIN categoria c ON e.id_categoria = c.id_categoria
+                WHERE il.estado = 'DISPONIBLE'
+                GROUP BY e.id_equipo, e.sku, e.tipo, e.descripcion, m.nombre, c.nombre
+                HAVING SUM(il.cantidad) <= :limite
                 ORDER BY cantidad ASC";
+                
         $this->db->query($sql);
         $this->db->bind(':limite', $limite);
         return $this->db->resultSet();
