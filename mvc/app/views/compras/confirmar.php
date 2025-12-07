@@ -24,7 +24,7 @@
                         <ul class="list-group">
                             <?php foreach($data['detalle'] as $item): ?>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <?php echo $item['equipo_sku']; ?> - <?php echo $item['equipo_descripcion']; ?>
+                                    <?php echo $item['sku']; ?> - <?php echo $item['equipo_descripcion']; ?>
                                     <span class="badge bg-primary rounded-pill"><?php echo $item['cantidad']; ?> unid.</span>
                                 </li>
                             <?php endforeach; ?>

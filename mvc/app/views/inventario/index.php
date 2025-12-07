@@ -7,7 +7,9 @@
             <a href="<?php echo URLROOT; ?>/reportes/diario" class="btn btn-outline-danger me-2" target="_blank">
                 <i class="bi bi-file-earmark-pdf"></i> Generar Reporte 
             </a>
-            <a href="<?php echo URLROOT; ?>/inventario/crear" class="btn btn-success">
+            <a href="<?php echo URLROOT; ?>/inventario/crear" 
+               class="btn btn-success <?php echo !puedeCrear() ? 'disabled' : ''; ?>"
+               <?php echo !puedeCrear() ? 'aria-disabled="true" tabindex="-1"' : ''; ?>>
                 <i class="bi bi-plus-circle"></i> Nuevo Lote
             </a>
         </div>
@@ -15,39 +17,26 @@
 
     <?php flash('mensaje'); ?>
 
-    <!-- Filtros de Búsqueda (UI-INV-01) -->
+    <!-- Filtros de Búsqueda -->
     <div class="card mb-4">
         <div class="card-header bg-light">
             <h5 class="mb-0"><i class="bi bi-funnel"></i> Filtros de Búsqueda</h5>
         </div>
         <div class="card-body">
             <form action="<?php echo URLROOT; ?>/inventario" method="GET" class="row g-3">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="form-label">SKU / Descripción</label>
                     <input type="text" name="sku" class="form-control" value="<?php echo $data['filtros']['sku'] ?? ''; ?>" placeholder="Buscar...">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label">Ubicación</label>
-                    <select name="ubicacion" class="form-select">
-                        <option value="">Todas</option>
-                        <?php foreach($data['ubicaciones'] as $ubicacion): ?>
-                            <option value="<?php echo $ubicacion['id_ubicacion']; ?>" <?php echo ($data['filtros']['id_ubicacion'] == $ubicacion['id_ubicacion']) ? 'selected' : ''; ?>>
-                                <?php echo $ubicacion['nombre']; ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">Estado</label>
-                    <select name="estado" class="form-select">
+                    <label class="form-label">Tipo</label>
+                    <select name="tipo" class="form-select">
                         <option value="">Todos</option>
-                        <option value="DISPONIBLE" <?php echo ($data['filtros']['estado'] == 'DISPONIBLE') ? 'selected' : ''; ?>>Disponible</option>
-                        <option value="RESERVADO" <?php echo ($data['filtros']['estado'] == 'RESERVADO') ? 'selected' : ''; ?>>Reservado</option>
-                        <option value="INSTALADO" <?php echo ($data['filtros']['estado'] == 'INSTALADO') ? 'selected' : ''; ?>>Instalado</option>
-                        <option value="DAÑADO" <?php echo ($data['filtros']['estado'] == 'DAÑADO') ? 'selected' : ''; ?>>Dañado</option>
+                        <option value="CAMARA" <?php echo ($data['filtros']['tipo'] == 'CAMARA') ? 'selected' : ''; ?>>Cámaras</option>
+                        <option value="SENSOR" <?php echo ($data['filtros']['tipo'] == 'SENSOR') ? 'selected' : ''; ?>>Sensores</option>
                     </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label class="form-label">Marca</label>
                     <select name="marca" class="form-select">
                         <option value="">Todas</option>
@@ -65,77 +54,58 @@
         </div>
     </div>
 
-    <!-- Tabla de Resultados -->
+    <!-- Tabla de Productos Agrupados -->
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover table-striped align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th>Lote ID</th>
                             <th>SKU</th>
-                            <th>Equipo</th>
-                            <th>Ubicación</th>
-                            <th>Cantidad</th>
-                            <th>Estado</th>
-                            <th>Fecha Ingreso</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                            <th>Marca</th>
+                            <th class="text-center">Disponible</th>
+                            <th class="text-center">Reservado</th>
+                            <th class="text-center">Total</th>
+                            <th class="text-center">Lotes</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if(empty($data['lotes'])): ?>
+                        <?php if(empty($data['productos'])): ?>
                             <tr>
-                                <td colspan="8" class="text-center py-4">No se encontraron lotes</td>
+                                <td colspan="9" class="text-center py-4">No se encontraron productos</td>
                             </tr>
                         <?php else: ?>
-                            <?php foreach($data['lotes'] as $lote): ?>
+                            <?php foreach($data['productos'] as $producto): ?>
                                 <tr>
-                                    <td>#<?php echo $lote['id_lote']; ?></td>
-                                    <td><span class="badge bg-secondary"><?php echo $lote['sku']; ?></span></td>
-                                    <td><?php echo $lote['equipo_descripcion']; ?></td>
-                                    <td><i class="bi bi-geo-alt"></i> <?php echo $lote['ubicacion_nombre']; ?></td>
+                                    <td><span class="badge bg-secondary"><?php echo $producto['sku']; ?></span></td>
                                     <td>
-                                        <span class="fw-bold <?php echo $lote['cantidad'] < 5 ? 'text-danger' : 'text-success'; ?>">
-                                            <?php echo $lote['cantidad']; ?>
-                                        </span>
+                                        <?php if($producto['tipo'] == 'CAMARA'): ?>
+                                            <i class="bi bi-camera-video text-primary"></i> Cámara
+                                        <?php else: ?>
+                                            <i class="bi bi-wifi text-success"></i> Sensor
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?php echo $producto['descripcion']; ?></td>
+                                    <td><?php echo $producto['marca_nombre'] ?? '-'; ?></td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success"><?php echo $producto['cantidad_disponible']; ?></span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-warning text-dark"><?php echo $producto['cantidad_reservada']; ?></span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="fw-bold text-primary"><?php echo $producto['cantidad_total']; ?></span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-info"><?php echo $producto['total_lotes']; ?></span>
                                     </td>
                                     <td>
-                                        <?php
-                                            $clase = 'bg-secondary';
-                                            switch($lote['estado']) {
-                                                case 'DISPONIBLE': $clase = 'bg-success'; break;
-                                                case 'RESERVADO': $clase = 'bg-warning text-dark'; break;
-                                                case 'INSTALADO': $clase = 'bg-primary'; break;
-                                                case 'DAÑADO': $clase = 'bg-danger'; break;
-                                            }
-                                        ?>
-                                        <span class="badge <?php echo $clase; ?>"><?php echo $lote['estado']; ?></span>
-                                    </td>
-                                    <td><?php echo date('d/m/Y', strtotime($lote['fecha_ingreso'])); ?></td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <a href="<?php echo URLROOT; ?>/inventario/historial/<?php echo $lote['id_lote']; ?>" class="btn btn-info" title="Historial">
-                                                <i class="bi bi-clock-history"></i>
-                                            </a>
-                                            <a href="<?php echo URLROOT; ?>/inventario/editar/<?php echo $lote['id_lote']; ?>" class="btn btn-warning" title="Editar">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <form action="<?php echo URLROOT; ?>/inventario/cambiarEstado/<?php echo $lote['id_lote']; ?>" method="POST">
-                                                        <input type="hidden" name="estado" value="DISPONIBLE">
-                                                        <button class="dropdown-item" type="submit">Marcar Disponible</button>
-                                                    </form>
-                                                </li>
-                                                <li>
-                                                    <form action="<?php echo URLROOT; ?>/inventario/cambiarEstado/<?php echo $lote['id_lote']; ?>" method="POST">
-                                                        <input type="hidden" name="estado" value="DAÑADO">
-                                                        <button class="dropdown-item text-danger" type="submit">Marcar Dañado</button>
-                                                    </form>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <a href="<?php echo URLROOT; ?>/inventario/verLotes/<?php echo $producto['id_equipo']; ?>" class="btn btn-sm btn-primary" title="Ver Lotes">
+                                            <i class="bi bi-eye"></i> Ver Lotes
+                                        </a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

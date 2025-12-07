@@ -48,6 +48,9 @@ class Equipos extends Controller {
      * Crear nuevo equipo
      */
     public function crear() {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden crear equipos', 'equipos');
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = [
                 'sku' => strtoupper(trim($_POST['sku'])),
@@ -85,6 +88,9 @@ class Equipos extends Controller {
      * Editar equipo
      */
     public function editar($id) {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden editar equipos', 'equipos');
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = [
                 'sku' => strtoupper(trim($_POST['sku'])),
@@ -133,6 +139,9 @@ class Equipos extends Controller {
      * Eliminar equipo
      */
     public function eliminar($id) {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden eliminar equipos', 'equipos');
+        
         if ($this->equipoModel->delete($id)) {
             $_SESSION['mensaje'] = 'Equipo eliminado exitosamente';
             $_SESSION['tipo_mensaje'] = 'success';

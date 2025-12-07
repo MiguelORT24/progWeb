@@ -9,7 +9,9 @@
 <div class="row mb-3">
     <div class="col-10"><h4>Lista de Proveedores</h4></div>
     <div class="col-2">
-        <a href="<?= URLROOT ?>/proveedores/create" class="btn btn-primary btn-sm">
+        <a href="<?= URLROOT ?>/proveedores/create" 
+           class="btn btn-primary btn-sm <?php echo !puedeGestionarMaestros() ? 'disabled' : ''; ?>"
+           <?php echo !puedeGestionarMaestros() ? 'aria-disabled="true" tabindex="-1"' : ''; ?>>
             <i class="fa fa-plus"></i> Agregar
         </a>
     </div>
@@ -38,11 +40,15 @@
                 <td><?= $proveedor['proveedor_email'] ?? '-' ?></td>
                 <td><span class="badge bg-info"><?= $proveedor['total_productos'] ?></span></td>
                 <td>
-                    <a href="<?= URLROOT ?>/proveedores/edit/<?= $proveedor['id'] ?>" class="btn btn-warning btn-sm">
+                    <a href="<?= URLROOT ?>/proveedores/edit/<?= $proveedor['id'] ?>" 
+                       class="btn btn-warning btn-sm <?php echo !puedeGestionarMaestros() ? 'disabled' : ''; ?>"
+                       <?php echo !puedeGestionarMaestros() ? 'aria-disabled="true" tabindex="-1"' : ''; ?>>
                         <i class="fa fa-edit"></i>
                     </a>
-                    <a href="<?= URLROOT ?>/proveedores/destroy/<?= $proveedor['id'] ?>" class="btn btn-danger btn-sm" 
-                       onclick="return confirm('¿Está seguro de eliminar este proveedor?')">
+                    <a href="<?= URLROOT ?>/proveedores/destroy/<?= $proveedor['id'] ?>" 
+                       class="btn btn-danger btn-sm <?php echo !puedeGestionarMaestros() ? 'disabled' : ''; ?>" 
+                       onclick="return confirm('¿Está seguro de eliminar este proveedor?')"
+                       <?php echo !puedeGestionarMaestros() ? 'aria-disabled="true" tabindex="-1"' : ''; ?>>
                         <i class="fa fa-trash"></i>
                     </a>
                 </td>

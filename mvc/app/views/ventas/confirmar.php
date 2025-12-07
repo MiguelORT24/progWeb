@@ -1,0 +1,50 @@
+<?php require_once APPROOT . '/views/layouts/header.php'; ?>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Confirmar Salida #<?php echo $data['venta']['id_compra']; ?></h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> Al confirmar esta salida, se reducirá automáticamente el inventario de los lotes disponibles.
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Resumen</h5>
+                        <p><strong>Cliente:</strong> <?php echo $data['venta']['proveedor_nombre']; ?></p>
+                        <p><strong>Fecha:</strong> <?php echo date('d/m/Y', strtotime($data['venta']['fecha'])); ?></p>
+                        <p><strong>Total:</strong> $<?php echo number_format($data['venta']['total'], 2); ?></p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Productos a Entregar</h5>
+                        <ul class="list-group">
+                            <?php foreach($data['detalle'] as $item): ?>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <?php echo $item['sku']; ?> - <?php echo $item['equipo_descripcion']; ?>
+                                    <span class="badge bg-primary rounded-pill"><?php echo $item['cantidad']; ?> unid.</span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+
+                    <form action="<?php echo URLROOT; ?>/ventas/confirmar/<?php echo $data['venta']['id_compra']; ?>" method="POST">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> El sistema buscará automáticamente los lotes disponibles y reducirá las cantidades necesarias.
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Confirmar Salida y Reducir Inventario</button>
+                            <a href="<?php echo URLROOT; ?>/ventas" class="btn btn-outline-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php require_once APPROOT . '/views/layouts/footer.php'; ?>

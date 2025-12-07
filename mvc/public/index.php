@@ -6,6 +6,7 @@
  */
 
 require_once '../app/config/config.inc.php';
+require_once APPROOT . 'helpers/helpers.php';
 
 // echo 'Estoy en index de /public';
 //dd($_GET); 

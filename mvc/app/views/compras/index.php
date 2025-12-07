@@ -3,9 +3,9 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1><i class="bi bi-cart"></i> Salidas </h1>
-        <!-- <a href="<?php echo URLROOT; ?>/compras/crear" class="btn btn-primary">
+        <a href="<?php echo URLROOT; ?>/compras/crear" class="btn btn-primary">
             <i class="bi bi-cart-plus"></i> Nueva Compra
-        </a> -->
+        </a>
     </div>
 
     <?php flash('mensaje'); ?>

@@ -9,7 +9,9 @@
 <div class="row mb-3">
     <div class="col-10"><h4>Lista de Categorías</h4></div>
     <div class="col-2">
-        <a href="<?= URLROOT ?>/categorias/create" class="btn btn-primary btn-sm">
+        <a href="<?= URLROOT ?>/categorias/create" 
+           class="btn btn-primary btn-sm <?php echo !puedeGestionarMaestros() ? 'disabled' : ''; ?>"
+           <?php echo !puedeGestionarMaestros() ? 'aria-disabled="true" tabindex="-1"' : ''; ?>>
             <i class="fa fa-plus"></i> Agregar
         </a>
     </div>
@@ -34,11 +36,15 @@
                 <td><?= $categoria['categoria_descripcion'] ?? '-' ?></td>
                 <td><span class="badge bg-info"><?= $categoria['total_productos'] ?></span></td>
                 <td>
-                    <a href="<?= URLROOT ?>/categorias/edit/<?= $categoria['id'] ?>" class="btn btn-warning btn-sm">
+                    <a href="<?= URLROOT ?>/categorias/edit/<?= $categoria['id'] ?>" 
+                       class="btn btn-warning btn-sm <?php echo !puedeGestionarMaestros() ? 'disabled' : ''; ?>"
+                       <?php echo !puedeGestionarMaestros() ? 'aria-disabled="true" tabindex="-1"' : ''; ?>>
                         <i class="fa fa-edit"></i>
                     </a>
-                    <a href="<?= URLROOT ?>/categorias/destroy/<?= $categoria['id'] ?>" class="btn btn-danger btn-sm" 
-                       onclick="return confirm('¿Está seguro de eliminar esta categoría?')">
+                    <a href="<?= URLROOT ?>/categorias/destroy/<?= $categoria['id'] ?>" 
+                       class="btn btn-danger btn-sm <?php echo !puedeGestionarMaestros() ? 'disabled' : ''; ?>" 
+                       onclick="return confirm('¿Está seguro de eliminar esta categoría?')"
+                       <?php echo !puedeGestionarMaestros() ? 'aria-disabled="true" tabindex="-1"' : ''; ?>>
                         <i class="fa fa-trash"></i>
                     </a>
                 </td>

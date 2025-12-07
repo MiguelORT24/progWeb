@@ -3,7 +3,9 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1><i class="bi bi-camera"></i> Catálogo de Equipos</h1>
-        <a href="<?php echo URLROOT; ?>/equipos/crear" class="btn btn-success">
+        <a href="<?php echo URLROOT; ?>/equipos/crear" 
+           class="btn btn-success <?php echo !puedeGestionarMaestros() ? 'disabled' : ''; ?>"
+           <?php echo !puedeGestionarMaestros() ? 'aria-disabled="true" tabindex="-1"' : ''; ?>>
             <i class="bi bi-plus-circle"></i> Nuevo Equipo
         </a>
     </div>
@@ -70,7 +72,9 @@
                                 <a href="<?php echo URLROOT; ?>/equipos/ver/<?php echo $equipo['id_equipo']; ?>" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="<?php echo URLROOT; ?>/equipos/editar/<?php echo $equipo['id_equipo']; ?>" class="btn btn-sm btn-outline-warning">
+                                <a href="<?php echo URLROOT; ?>/equipos/editar/<?php echo $equipo['id_equipo']; ?>" 
+                                   class="btn btn-sm btn-outline-warning <?php echo !puedeGestionarMaestros() ? 'disabled' : ''; ?>"
+                                   <?php echo !puedeGestionarMaestros() ? 'aria-disabled="true" tabindex="-1"' : ''; ?>>
                                     <i class="bi bi-pencil"></i>
                                 </a>
                             </div>

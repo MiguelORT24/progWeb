@@ -9,6 +9,9 @@
 <div class="row mb-3">
     <div class="col-8"><h4>Historial de Movimientos</h4></div>
     <div class="col-4 text-end">
+        <a href="<?= URLROOT ?>/reportes/movimientosHoy" class="btn btn-primary btn-sm">
+            <i class="fa fa-file-pdf"></i> Generar reporte
+        </a>
         <a href="<?= URLROOT ?>/movimientos/entrada" class="btn btn-success btn-sm">
             <i class="fa fa-arrow-down"></i> Entrada
         </a>

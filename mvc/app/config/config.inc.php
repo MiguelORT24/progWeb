@@ -6,6 +6,9 @@
  * leer sober .env y PHPDoc 
  */
 
+// Configurar zona horaria para México
+date_default_timezone_set('America/Mexico_City');
+
 #constantes de URL 
 define ('URLROOT', 'http://inventario'); //cual es mi dominio
 define('APPROOT', __DIR__ . '/../'); //directorio de la app

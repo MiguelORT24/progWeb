@@ -29,6 +29,9 @@ class Marcas extends Controller {
      * Crear nueva marca
      */
     public function crear() {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden crear marcas', 'marcas');
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = [
                 'nombre' => trim($_POST['nombre'])
@@ -57,6 +60,9 @@ class Marcas extends Controller {
      * Editar marca
      */
     public function editar($id) {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden editar marcas', 'marcas');
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = [
                 'nombre' => trim($_POST['nombre'])
@@ -81,6 +87,9 @@ class Marcas extends Controller {
      * Eliminar marca
      */
     public function eliminar($id) {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden eliminar marcas', 'marcas');
+        
         if ($this->marcaModel->tieneEquipos($id)) {
             $_SESSION['mensaje'] = 'No se puede eliminar la marca porque tiene equipos asociados';
             $_SESSION['tipo_mensaje'] = 'warning';

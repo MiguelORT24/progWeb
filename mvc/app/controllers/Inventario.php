@@ -20,31 +20,24 @@ class Inventario extends Controller {
     }
 
     /**
-     * Vista principal - UI-INV-01 (RF-08)
-     * Panel de filtros y grilla de resultados
+     * Vista principal - Inventario Agrupado por Producto
+     * Muestra productos con cantidades totales
      */
     public function index() {
         // Capturar filtros
         $filtros = [
             'tipo' => $_GET['tipo'] ?? '',
-            'id_ubicacion' => $_GET['ubicacion'] ?? '',
-            'estado' => $_GET['estado'] ?? '',
             'marca' => $_GET['marca'] ?? '',
-            'categoria' => $_GET['categoria'] ?? '',
-            'fecha_desde' => $_GET['fecha_desde'] ?? '',
-            'fecha_hasta' => $_GET['fecha_hasta'] ?? '',
             'sku' => $_GET['sku'] ?? ''
         ];
         
-        // Buscar lotes con filtros
-        $lotes = $this->loteModel->buscar($filtros);
+        // Obtener inventario agrupado
+        $productos = $this->loteModel->inventarioAgrupado($filtros);
         
         $data = [
-            'titulo' => 'Inventario por Lotes',
-            'lotes' => $lotes,
-            'ubicaciones' => $this->ubicacionModel->all(),
+            'titulo' => 'Inventario por Producto',
+            'productos' => $productos,
             'marcas' => $this->marcaModel->all(),
-            'categorias' => $this->categoriaModel->all(),
             'filtros' => $filtros
         ];
         
@@ -52,9 +45,28 @@ class Inventario extends Controller {
     }
 
     /**
+     * Ver lotes de un producto específico
+     */
+    public function verLotes($id_equipo) {
+        $equipo = $this->equipoModel->find($id_equipo);
+        $lotes = $this->loteModel->lotesPorEquipo($id_equipo);
+        
+        $data = [
+            'equipo' => $equipo,
+            'lotes' => $lotes,
+            'ubicaciones' => $this->ubicacionModel->all()
+        ];
+        
+        $this->view('inventario/lotes', $data);
+    }
+
+    /**
      * Crear nuevo lote (RF-06)
      */
     public function crear() {
+        requerirAuth();
+        requerirPermiso(puedeCrear(), 'No tienes permisos para crear lotes', 'inventario');
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = [
                 'id_equipo' => $_POST['id_equipo'],
@@ -86,6 +98,9 @@ class Inventario extends Controller {
      * Editar lote
      */
     public function editar($id) {
+        requerirAuth();
+        requerirPermiso(puedeEditar(), 'No tienes permisos para editar lotes', 'inventario');
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = [
                 'id_equipo' => $_POST['id_equipo'],
@@ -119,6 +134,9 @@ class Inventario extends Controller {
      * Cambiar estado de lote (RF-07)
      */
     public function cambiarEstado($id) {
+        requerirAuth();
+        requerirPermiso(puedeEditar(), 'No tienes permisos para cambiar estados', 'inventario');
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nuevoEstado = $_POST['estado'];
             

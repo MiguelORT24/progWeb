@@ -48,13 +48,13 @@
                                 <tr>
                                     <td><?php echo date('d/m/Y H:i', strtotime($mov['fecha_hora'])); ?></td>
                                     <td>
-                                        <span class="badge <?php echo $mov['tipo_movimiento'] == 'ENTRADA' ? 'bg-success' : 'bg-danger'; ?>">
-                                            <?php echo $mov['tipo_movimiento']; ?>
+                                        <span class="badge <?php echo $mov['tipo'] == 'ENTRADA' ? 'bg-success' : 'bg-danger'; ?>">
+                                            <?php echo $mov['tipo']; ?>
                                         </span>
                                     </td>
                                     <td><?php echo $mov['cantidad']; ?></td>
-                                    <td><?php echo $mov['usuario_nombre']; ?></td>
-                                    <td><?php echo $mov['referencia']; ?></td>
+                                    <td><?php echo $mov['usuario_nombre'] ?? 'Sistema'; ?></td>
+                                    <td><?php echo $mov['motivo'] ?? '-'; ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>

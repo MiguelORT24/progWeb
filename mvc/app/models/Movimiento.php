@@ -41,6 +41,30 @@ class Movimiento {
     }
 
     /**
+     * Obtener movimientos del día actual
+     */
+    public function hoy() {
+        $sql = "SELECT 
+                    mi.id_mov,
+                    mi.tipo,
+                    mi.cantidad,
+                    mi.motivo,
+                    e.sku,
+                    e.descripcion,
+                    u.nombre AS usuario_nombre,
+                    mi.fecha_hora AS created_at
+                FROM movimiento_inventario mi
+                INNER JOIN inventario_lote il ON mi.id_lote = il.id_lote
+                INNER JOIN equipo e ON il.id_equipo = e.id_equipo
+                LEFT JOIN usuario u ON mi.id_usuario = u.id_usuario
+                WHERE DATE(mi.fecha_hora) = CURDATE()
+                ORDER BY mi.fecha_hora ASC";
+        
+        $this->db->query($sql);
+        return $this->db->resultSet();
+    }
+
+    /**
      * Crear un nuevo movimiento y actualizar stock
      */
     public function create($data) {

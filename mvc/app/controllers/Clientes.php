@@ -29,6 +29,9 @@ class Clientes extends Controller {
      * Crear nuevo cliente
      */
     public function crear() {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden crear clientes', 'clientes');
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = [
                 'nombre' => trim($_POST['nombre']),
@@ -54,6 +57,9 @@ class Clientes extends Controller {
      * Editar cliente
      */
     public function editar($id) {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden editar clientes', 'clientes');
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = [
                 'nombre' => trim($_POST['nombre']),
@@ -96,6 +102,9 @@ class Clientes extends Controller {
      * Eliminar cliente
      */
     public function eliminar($id) {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden eliminar clientes', 'clientes');
+        
         if ($this->clienteModel->tieneOrdenes($id)) {
             $_SESSION['mensaje'] = 'No se puede eliminar el cliente porque tiene órdenes asociadas';
             $_SESSION['tipo_mensaje'] = 'warning';

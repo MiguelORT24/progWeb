@@ -8,7 +8,7 @@
 
 class Proveedor {
     private $db;
-    private $table = 'proveedores';
+    private $table = 'proveedor';
 
     public function __construct() {
         $this->db = new Base($this->table);
@@ -46,35 +46,25 @@ class Proveedor {
      * Eliminar un proveedor
      */
     public function delete($id) {
-        // Verificar si hay productos asociados
-        $sql = "SELECT COUNT(*) as total FROM productos WHERE proveedor_id = :id";
-        $this->db->query($sql);
-        $this->db->bind(':id', $id);
-        $resultado = $this->db->single();
-        
-        if ($resultado['total'] > 0) {
-            return false; // No se puede eliminar si hay productos asociados
-        }
-        
-        return $this->db->where('id', $id)->delete();
+        return $this->db->where('id_proveedor', $id)->delete();
     }
 
     /**
-     * Obtener proveedores con conteo de productos
+     * Obtener proveedores con conteo de compras
      */
-    public function conConteoProductos() {
+    public function conConteoCompras() {
         $sql = "SELECT 
-                    pr.id,
-                    pr.proveedor_nombre,
-                    pr.proveedor_contacto,
-                    pr.proveedor_telefono,
-                    pr.proveedor_email,
-                    COUNT(p.id) as total_productos
-                FROM proveedores pr
-                LEFT JOIN productos p ON pr.id = p.proveedor_id
-                GROUP BY pr.id, pr.proveedor_nombre, pr.proveedor_contacto, 
-                         pr.proveedor_telefono, pr.proveedor_email
-                ORDER BY pr.proveedor_nombre";
+                    pr.id_proveedor,
+                    pr.nombre,
+                    pr.contacto,
+                    pr.telefono,
+                    pr.email,
+                    COUNT(c.id_compra) as total_compras
+                FROM proveedor pr
+                LEFT JOIN compra c ON pr.id_proveedor = c.id_proveedor
+                GROUP BY pr.id_proveedor, pr.nombre, pr.contacto, 
+                         pr.telefono, pr.email
+                ORDER BY pr.nombre";
         
         $this->db->query($sql);
         return $this->db->resultSet();

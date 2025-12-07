@@ -313,4 +313,11 @@ class Base
         return $this->stmt->fetch();
     }
 
+    /**
+     * Obtener el último ID insertado
+     */
+    public function lastInsertId() {
+        return $this->dbh->lastInsertId();
+    }
+
 } //Fin de la clase

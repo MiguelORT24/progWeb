@@ -29,6 +29,9 @@ class Ubicaciones extends Controller {
      * Crear nueva ubicación
      */
     public function crear() {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden crear ubicaciones', 'ubicaciones');
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = [
                 'nombre' => trim($_POST['nombre'])
@@ -56,6 +59,9 @@ class Ubicaciones extends Controller {
      * Editar ubicación
      */
     public function editar($id) {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden editar ubicaciones', 'ubicaciones');
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = [
                 'nombre' => trim($_POST['nombre'])
@@ -80,6 +86,9 @@ class Ubicaciones extends Controller {
      * Eliminar ubicación
      */
     public function eliminar($id) {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden eliminar ubicaciones', 'ubicaciones');
+        
         if ($this->ubicacionModel->tieneLotes($id)) {
             $_SESSION['mensaje'] = 'No se puede eliminar la ubicación porque tiene lotes asociados';
             $_SESSION['tipo_mensaje'] = 'warning';

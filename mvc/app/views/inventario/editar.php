@@ -44,7 +44,6 @@
                                 <select name="estado" class="form-select">
                                     <option value="DISPONIBLE" <?php echo ($data['lote']['estado'] == 'DISPONIBLE') ? 'selected' : ''; ?>>Disponible</option>
                                     <option value="RESERVADO" <?php echo ($data['lote']['estado'] == 'RESERVADO') ? 'selected' : ''; ?>>Reservado</option>
-                                    <option value="INSTALADO" <?php echo ($data['lote']['estado'] == 'INSTALADO') ? 'selected' : ''; ?>>Instalado</option>
                                     <option value="DAÑADO" <?php echo ($data['lote']['estado'] == 'DAÑADO') ? 'selected' : ''; ?>>Dañado</option>
                                 </select>
                             </div>

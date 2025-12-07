@@ -28,8 +28,17 @@
                             <td><?php echo $cliente['telefono']; ?></td>
                             <td><?php echo $cliente['email']; ?></td>
                             <td>
-                                <a href="<?php echo URLROOT; ?>/clientes/editar/<?php echo $cliente['id_cliente']; ?>" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
-                                <a href="<?php echo URLROOT; ?>/clientes/eliminar/<?php echo $cliente['id_cliente']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?');"><i class="bi bi-trash"></i></a>
+                                <a href="<?php echo URLROOT; ?>/clientes/editar/<?php echo $cliente['id_cliente']; ?>" 
+                                   class="btn btn-sm btn-warning <?php echo !puedeGestionarMaestros() ? 'disabled' : ''; ?>"
+                                   <?php echo !puedeGestionarMaestros() ? 'aria-disabled="true" tabindex="-1"' : ''; ?>>
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="<?php echo URLROOT; ?>/clientes/eliminar/<?php echo $cliente['id_cliente']; ?>" 
+                                   class="btn btn-sm btn-danger <?php echo !puedeGestionarMaestros() ? 'disabled' : ''; ?>" 
+                                   onclick="return confirm('¿Eliminar?');"
+                                   <?php echo !puedeGestionarMaestros() ? 'aria-disabled="true" tabindex="-1"' : ''; ?>>
+                                    <i class="bi bi-trash"></i>
+                                </a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

@@ -7,36 +7,60 @@
 class Home extends Controller {
     private $loteModel;
     private $equipoModel;
-    private $ordenModel;
     private $compraModel;
 
     public function __construct() {
-        // Verificar sesión (comentado temporalmente para testing)
-        // if (!isset($_SESSION['usuario_id'])) {
-        //     redirect('login');
-        // }
-        
         $this->loteModel = $this->model('InventarioLote');
         $this->equipoModel = $this->model('Equipo');
-        $this->ordenModel = $this->model('OrdenInstalacion');
         $this->compraModel = $this->model('Compra');
+    }
+
+    /**
+     * Página inicial - Redirige según autenticación
+     */
+    public function index() {
+        // Si no está logueado, redirigir a login
+        if (!estaAutenticado()) {
+            redirect('login');
+        }
+        
+        // Si está logueado, redirigir a dashboard
+        redirect('home/dashboard');
     }
 
     /**
      * Dashboard principal
      */
-    public function index() {
-        // Estadísticas para el dashboard
+    public function dashboard() {
+        requerirAuth();
+        
+        // Obtener inventario agrupado
+        $inventario = $this->loteModel->inventarioAgrupado([]);
+        $total_productos = count($inventario);
+        $total_unidades = array_sum(array_column($inventario, 'cantidad_total'));
+        
+        // Stock bajo
+        $stock_bajo = $this->loteModel->stockBajo(10);
+        
+        // Compras pendientes (solo si puede confirmar)
+        $compras_pendientes = [];
+        if (puedeConfirmar()) {
+            $compras = $this->compraModel->all();
+            $compras_pendientes = array_filter($compras, function($c) {
+                return $c['estado'] == 'PENDIENTE';
+            });
+        }
+        
         $data = [
             'titulo' => 'Dashboard - Sistema de Inventario',
-            'lotes_disponibles' => count($this->loteModel->lotesDisponibles()),
-            'stock_bajo' => count($this->loteModel->stockBajo()),
-            'ordenes_pendientes' => count($this->ordenModel->pendientes()),
-            'total_equipos' => count($this->equipoModel->all()),
+            'total_productos' => $total_productos,
+            'total_unidades' => $total_unidades,
+            'stock_bajo' => $stock_bajo,
+            'compras_pendientes' => $compras_pendientes,
             'usuario' => $_SESSION['usuario_nombre'] ?? 'Invitado',
             'rol' => $_SESSION['usuario_rol'] ?? 'LECTOR'
         ];
         
-        $this->view('home/index', $data);
+        $this->view('home/dashboard', $data);
     }
 }

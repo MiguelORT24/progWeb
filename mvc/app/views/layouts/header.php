@@ -30,13 +30,10 @@
                         <a class="nav-link" href="<?php echo URLROOT; ?>/equipos">Equipos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo URLROOT; ?>/compras">Salidas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo URLROOT; ?>/ordenes">Órdenes</a>
+                        <a class="nav-link" href="<?php echo URLROOT; ?>/ventas">Salidas</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Maestros</a>
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Catálogos</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="<?php echo URLROOT; ?>/marcas">Marcas</a></li>
                             <li><a class="dropdown-item" href="<?php echo URLROOT; ?>/ubicaciones">Ubicaciones</a></li>

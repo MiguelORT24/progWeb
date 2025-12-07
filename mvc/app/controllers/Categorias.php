@@ -20,6 +20,9 @@ class Categorias extends Controller {
      * Método create
      */
     public function create() {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden crear categorías', 'categorias');
+        
         $metodo = $_SERVER['REQUEST_METHOD'];
         $data = [
             'accion' => 'Crear',
@@ -49,6 +52,9 @@ class Categorias extends Controller {
      * Método edit
      */
     public function edit($id) {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden editar categorías', 'categorias');
+        
         $metodo = $_SERVER['REQUEST_METHOD'];
 
         if ($metodo == 'POST') {
@@ -82,6 +88,9 @@ class Categorias extends Controller {
      * Método destroy
      */
     public function destroy($id) {
+        requerirAuth();
+        requerirPermiso(puedeGestionarMaestros(), 'Solo administradores pueden eliminar categorías', 'categorias');
+        
         $resultado = $this->modelo->delete($id);
 
         if ($resultado) {
