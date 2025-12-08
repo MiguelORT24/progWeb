@@ -75,10 +75,8 @@
 
         <div class="mt-4 text-center">
             <small class="text-muted">
-                <strong>Usuarios de prueba:</strong><br>
-                admin@inventario.com / Admin123!<br>
-                almacen@inventario.com / Admin123!<br>
-                lector@inventario.com / Admin123!
+                <strong>Usuario de prueba:</strong><br>
+                admin@inventario.com / Admin123!
             </small>
         </div>
     </div>
