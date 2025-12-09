@@ -250,7 +250,7 @@ B) TARJETAS DE EQUIPOS:
    • Descripción del equipo
    • ID del equipo (pie de tarjeta)
    • Botones de acción:
-     - 👁️ Ver: Muestra detalles completos
+     - 👁️ Ver: Muestra detalles completos del equipo
      - ✏️ Editar: Modifica la información (requiere permisos)
 
 CÓMO CREAR UN NUEVO EQUIPO:
@@ -278,10 +278,14 @@ CÓMO VER DETALLES DE UN EQUIPO:
 2. Haga clic en el botón "Ver" (icono de ojo)
 
 3. Se mostrará una pantalla con:
-   - Toda la información del equipo
-   - Especificaciones técnicas
-   - Historial de movimientos relacionados
-   - Stock actual en todos los lotes
+   - Información general del equipo (SKU, tipo, marca, categoría, descripción)
+   - Stock total:
+     * Cantidad disponible
+     * Cantidad reservada
+     * Total general
+   - Acciones rápidas:
+     * Ver todos los lotes de este equipo
+     * Crear nuevo lote para este equipo
 
 CÓMO EDITAR UN EQUIPO:
 ----------------------
