@@ -168,10 +168,9 @@ CÓMO CREAR UN NUEVO LOTE:
    a) Seleccione el Equipo del catálogo
    b) Ingrese la Cantidad de unidades
    c) Seleccione la Ubicación en el almacén
-   d) Ingrese el Precio Unitario
-   e) Ingrese el Número de Lote (identificador único)
-   f) Seleccione la Fecha de Vencimiento (si aplica)
-   g) Agregue Observaciones adicionales (opcional)
+   d) Ingrese el Número de Lote (identificador único)
+   e) Seleccione la Fecha de Vencimiento (si aplica)
+   f) Agregue Observaciones adicionales (opcional)
 
 3. Haga clic en "Guardar"
 
@@ -189,7 +188,6 @@ CÓMO VER LOS LOTES DE UN EQUIPO:
    - Ubicación en almacén
    - Cantidad disponible
    - Cantidad reservada
-   - Precio unitario
    - Fecha de vencimiento
    - Estado (Disponible/Agotado)
    - Acciones: Editar o ver historial
@@ -202,7 +200,6 @@ CÓMO EDITAR UN LOTE:
 2. Modifique los campos necesarios:
    - Cantidad
    - Ubicación
-   - Precio
    - Fecha de vencimiento
    - Observaciones
 
