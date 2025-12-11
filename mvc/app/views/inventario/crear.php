@@ -50,8 +50,8 @@
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Fecha de Ingreso</label>
-                                <input type="date" name="fecha_ingreso" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+                                <label class="form-label">Fecha y Hora de Ingreso</label>
+                                <input type="datetime-local" name="fecha_ingreso" class="form-control" value="<?php echo date('Y-m-d\TH:i'); ?>" readonly>
                             </div>
                         </div>
 

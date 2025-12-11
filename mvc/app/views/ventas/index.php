@@ -2,11 +2,11 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><i class="bi bi-cart"></i> Gestión de Salidas</h1>
+        <h1><i class="bi bi-box-arrow-right"></i> Gestión de Salidas</h1>
         <a href="<?php echo URLROOT; ?>/ventas/crear" 
            class="btn btn-primary <?php echo !puedeCrear() ? 'disabled' : ''; ?>"
            <?php echo !puedeCrear() ? 'aria-disabled="true" tabindex="-1"' : ''; ?>>
-            <i class="bi bi-cart-plus"></i> Nueva Salida
+            <i class="bi bi-plus-circle"></i> Nueva Salida
         </a>
     </div>
 
@@ -20,7 +20,6 @@
                         <tr>
                             <th>ID</th>
                             <th>Fecha</th>
-                            <th>Cliente</th>
                             <th class="text-center">Estado</th>
                             <th class="text-center">Acciones</th>
                         </tr>
@@ -34,8 +33,7 @@
                             <?php foreach($data['ventas'] as $venta): ?>
                                 <tr>
                                     <td>#<?php echo $venta['id_compra']; ?></td>
-                                    <td><?php echo date('d/m/Y', strtotime($venta['fecha'])); ?></td>
-                                    <td><?php echo $venta['proveedor_nombre']; ?></td>
+                                    <td><?php echo date('d/m/Y H:i', strtotime($venta['fecha'])); ?></td>
                                     <td class="text-center">
                                         <?php
                                             $clase = 'secondary';

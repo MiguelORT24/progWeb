@@ -27,10 +27,7 @@
                         ?>
                         <span class="badge bg-<?php echo $clase; ?>"><?php echo $data['venta']['estado']; ?></span>
                     </p>
-                    <p><strong>Fecha:</strong> <?php echo date('d/m/Y', strtotime($data['venta']['fecha'])); ?></p>
-                    <p><strong>Cliente:</strong> <?php echo $data['venta']['proveedor_nombre']; ?></p>
-                    <p><strong>Contacto:</strong> <?php echo $data['venta']['proveedor_contacto'] ?? '-'; ?></p>
-                    <p><strong>Teléfono:</strong> <?php echo $data['venta']['proveedor_telefono'] ?? '-'; ?></p>
+                    <p><strong>Fecha:</strong> <?php echo date('d/m/Y H:i', strtotime($data['venta']['fecha'])); ?></p>
                 </div>
             </div>
 
