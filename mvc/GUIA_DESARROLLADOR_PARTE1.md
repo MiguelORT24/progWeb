@@ -51,7 +51,7 @@ mvc/
 
 ### 1.3 Patrón MVC Implementado
 
-**Modelo (Model)**: Gestiona datos y lógica de negocio
+**Modelo (Model)**: Gestiona datos y lógica de la aplicación
 - Ubicación: `app/models/`
 - Responsabilidad: Interactuar con la base de datos
 - Ejemplo: `InventarioLote.php`, `Equipo.php`
