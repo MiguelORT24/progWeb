@@ -10,6 +10,7 @@ class Inventario extends Controller {
     private $ubicacionModel;
     private $marcaModel;
     private $categoriaModel;
+    private $movimientoModel;
 
     public function __construct() {
         $this->loteModel = $this->model('InventarioLote');
@@ -17,6 +18,7 @@ class Inventario extends Controller {
         $this->ubicacionModel = $this->model('Ubicacion');
         $this->marcaModel = $this->model('Marca');
         $this->categoriaModel = $this->model('Categoria');
+        $this->movimientoModel = $this->model('Movimiento');
     }
 
     /**
@@ -28,16 +30,41 @@ class Inventario extends Controller {
         $filtros = [
             'tipo' => $_GET['tipo'] ?? '',
             'marca' => $_GET['marca'] ?? '',
+            'categoria' => $_GET['categoria'] ?? '',
             'sku' => $_GET['sku'] ?? ''
         ];
         
         // Obtener inventario agrupado
         $productos = $this->loteModel->inventarioAgrupado($filtros);
         
+        $marcas = $this->marcaModel->all();
+        if (!empty($filtros['marca'])) {
+            $enLista = array_filter($marcas, fn($m) => (string)$m['id_marca'] === (string)$filtros['marca']);
+            if (empty($enLista)) {
+                $marcaExtra = $this->marcaModel->find($filtros['marca']);
+                if ($marcaExtra) {
+                    $marcas[] = $marcaExtra;
+                }
+            }
+        }
+
+        $categorias = $this->categoriaModel->all();
+        if (!empty($filtros['categoria'])) {
+            $enListaCat = array_filter($categorias, fn($c) => (string)$c['id_categoria'] === (string)$filtros['categoria']);
+            if (empty($enListaCat)) {
+                $catExtra = $this->categoriaModel->find($filtros['categoria']);
+                if ($catExtra) {
+                    $categorias[] = $catExtra;
+                }
+            }
+        }
+
         $data = [
             'titulo' => 'Inventario por Producto',
             'productos' => $productos,
-            'marcas' => $this->marcaModel->all(),
+            'marcas' => $marcas,
+            'categorias' => $categorias,
+            'tipos' => ['CAMARA', 'SENSOR', 'COMPONENTE'],
             'filtros' => $filtros
         ];
         
@@ -73,7 +100,7 @@ class Inventario extends Controller {
                 'id_ubicacion' => $_POST['id_ubicacion'],
                 'cantidad' => $_POST['cantidad'],
                 'estado' => $_POST['estado'] ?? 'DISPONIBLE',
-                'fecha_ingreso' => $_POST['fecha_ingreso'] ?? date('Y-m-d H:i:s')
+                'fecha_ingreso' => $_POST['fecha_ingreso'] ?? date('Y-m-d')
             ];
             
             if ($this->loteModel->create($data)) {
@@ -173,11 +200,25 @@ class Inventario extends Controller {
     public function reporteDiario() {
         $fecha = $_GET['fecha'] ?? date('Y-m-d');
         $reporte = $this->loteModel->reporteDiario($fecha);
+        $movimientosDia = $this->movimientoModel->porFecha($fecha);
+        $entradasDia = array_reduce($movimientosDia, fn($carry, $mov) => $carry + ($mov['tipo'] === 'entrada' ? (int)$mov['cantidad'] : 0), 0);
+        $salidasDia = array_reduce($movimientosDia, fn($carry, $mov) => $carry + ($mov['tipo'] === 'salida' ? (int)$mov['cantidad'] : 0), 0);
+        $entradasDetalle = array_values(array_filter($movimientosDia, fn($mov) => $mov['tipo'] === 'entrada'));
+        $salidasDetalle = array_values(array_filter($movimientosDia, fn($mov) => $mov['tipo'] === 'salida'));
+        $productos = $this->loteModel->inventarioAgrupado([]);
+        $totalUnidades = array_reduce($productos, fn($carry, $p) => $carry + (int)($p['cantidad_total'] ?? 0), 0);
         
         $data = [
             'titulo' => 'Reporte Diario de Inventario',
             'fecha' => $fecha,
-            'reporte' => $reporte
+            'reporte' => $reporte,
+            'entradas' => $entradasDia,
+            'salidas' => $salidasDia,
+            'entradas_detalle' => $entradasDetalle,
+            'salidas_detalle' => $salidasDetalle,
+            'productos' => $productos,
+            'total_unidades' => $totalUnidades,
+            'usuario' => $_SESSION['usuario_nombre'] ?? 'Sistema'
         ];
         
         $this->view('inventario/reporte_diario', $data);

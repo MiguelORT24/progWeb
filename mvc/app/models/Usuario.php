@@ -18,7 +18,7 @@ class Usuario {
      * Obtener todos los usuarios
      */
     public function all() {
-        $sql = "SELECT id_usuario, nombre, email, rol FROM usuario ORDER BY nombre";
+        $sql = "SELECT id_usuario, nombre, email, 'ADMIN' AS rol FROM usuario ORDER BY nombre";
         $this->db->query($sql);
         return $this->db->resultSet();
     }
@@ -27,7 +27,7 @@ class Usuario {
      * Buscar un usuario por ID
      */
     public function find($id) {
-        $sql = "SELECT id_usuario, nombre, email, rol FROM usuario WHERE id_usuario = :id";
+        $sql = "SELECT id_usuario, nombre, email, 'ADMIN' AS rol FROM usuario WHERE id_usuario = :id";
         $this->db->query($sql);
         $this->db->bind(':id', $id);
         return $this->db->single();
@@ -37,14 +37,13 @@ class Usuario {
      * Crear un nuevo usuario
      */
     public function create($data) {
-        $sql = "INSERT INTO usuario (nombre, email, password, rol) 
-                VALUES (:nombre, :email, :password, :rol)";
+        $sql = "INSERT INTO usuario (nombre, email, contrasena) 
+                VALUES (:nombre, :email, :contrasena)";
         
         $this->db->query($sql);
         $this->db->bind(':nombre', $data['nombre']);
         $this->db->bind(':email', $data['email']);
-        $this->db->bind(':password', password_hash($data['password'], PASSWORD_DEFAULT));
-        $this->db->bind(':rol', $data['rol'] ?? 'LECTOR');
+        $this->db->bind(':contrasena', password_hash($data['password'], PASSWORD_DEFAULT));
         
         return $this->db->execute();
     }
@@ -53,32 +52,28 @@ class Usuario {
      * Actualizar un usuario
      */
     public function update($id, $data) {
-        // Si se proporciona nueva contraseña
+        $campos = [
+            'nombre' => $data['nombre'],
+            'email' => $data['email']
+        ];
+
         if (!empty($data['password'])) {
-            $sql = "UPDATE usuario 
-                    SET nombre = :nombre, 
-                        email = :email, 
-                        password = :password, 
-                        rol = :rol 
-                    WHERE id_usuario = :id";
-            
-            $this->db->query($sql);
-            $this->db->bind(':password', password_hash($data['password'], PASSWORD_DEFAULT));
-        } else {
-            $sql = "UPDATE usuario 
-                    SET nombre = :nombre, 
-                        email = :email, 
-                        rol = :rol 
-                    WHERE id_usuario = :id";
-            
-            $this->db->query($sql);
+            $campos['contrasena'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
-        
+
+        $sets = [];
+        foreach ($campos as $key => $value) {
+            $sets[] = "{$key} = :{$key}";
+        }
+
+        $sql = "UPDATE usuario SET " . implode(', ', $sets) . " WHERE id_usuario = :id";
+        $this->db->query($sql);
+
+        foreach ($campos as $key => $value) {
+            $this->db->bind(":{$key}", $value);
+        }
         $this->db->bind(':id', $id);
-        $this->db->bind(':nombre', $data['nombre']);
-        $this->db->bind(':email', $data['email']);
-        $this->db->bind(':rol', $data['rol']);
-        
+
         return $this->db->execute();
     }
 
@@ -96,17 +91,21 @@ class Usuario {
      * Login de usuario (RF-21)
      */
     public function login($email, $password) {
-        $sql = "SELECT * FROM usuario WHERE email = :email";
+        $sql = "SELECT id_usuario, nombre, email, contrasena FROM usuario WHERE email = :email";
         $this->db->query($sql);
         $this->db->bind(':email', $email);
         $usuario = $this->db->single();
         
         if ($usuario) {
-            if (password_verify($password, $usuario['password'])) {
-                // No devolver la contraseña
-                unset($usuario['password']);
+            if (password_verify($password, $usuario['contrasena'])) {
+                unset($usuario['contrasena']);
+                $usuario['rol'] = 'ADMIN';
                 return $usuario;
+            } else {
+                $this->logDebug("password_mismatch", $email);
             }
+        } else {
+            $this->logDebug("email_not_found", $email);
         }
         return false;
     }
@@ -115,46 +114,36 @@ class Usuario {
      * Buscar usuario por email
      */
     public function buscarPorEmail($email) {
-        $sql = "SELECT id_usuario, nombre, email, rol FROM usuario WHERE email = :email";
+        $sql = "SELECT id_usuario, nombre, email, 'ADMIN' AS rol FROM usuario WHERE email = :email";
         $this->db->query($sql);
         $this->db->bind(':email', $email);
         return $this->db->single();
     }
 
     /**
-     * Verificar si el usuario tiene permiso según su rol
-     */
-    public function tienePermiso($rol_usuario, $rol_requerido) {
-        $jerarquia = [
-            'LECTOR' => 1,
-            'ALMACEN' => 2,
-            'ADMIN' => 3
-        ];
-        
-        return ($jerarquia[$rol_usuario] ?? 0) >= ($jerarquia[$rol_requerido] ?? 0);
-    }
-
-    /**
-     * Obtener usuarios por rol
-     */
-    public function porRol($rol) {
-        $sql = "SELECT id_usuario, nombre, email, rol 
-                FROM usuario 
-                WHERE rol = :rol 
-                ORDER BY nombre";
-        $this->db->query($sql);
-        $this->db->bind(':rol', $rol);
-        return $this->db->resultSet();
-    }
-
-    /**
      * Cambiar contraseña de un usuario
      */
     public function cambiarPassword($id, $nueva_password) {
-        $sql = "UPDATE usuario SET password = :password WHERE id_usuario = :id";
+        $sql = "UPDATE usuario SET contrasena = :contrasena WHERE id_usuario = :id";
         $this->db->query($sql);
         $this->db->bind(':id', $id);
-        $this->db->bind(':password', password_hash($nueva_password, PASSWORD_DEFAULT));
+        $this->db->bind(':contrasena', password_hash($nueva_password, PASSWORD_DEFAULT));
         return $this->db->execute();
+    }
+
+    /**
+     * Log sencillo a archivo para depurar problemas de login en servidor web
+     */
+    private function logDebug(string $tipo, string $email): void {
+        $line = sprintf("[%s] %s :: %s\n", date('Y-m-d H:i:s'), $tipo, $email);
+        $file = __DIR__ . '/../../logs/login_debug.log';
+        // Intentar en el repo
+        if (@file_put_contents($file, $line, FILE_APPEND) !== false) {
+            return;
+        }
+        // Fallback a /tmp (permite escribir aunque Apache tenga permisos limitados)
+        @file_put_contents('/tmp/inventario_login.log', $line, FILE_APPEND);
+        // Último recurso: error_log
+        error_log("[LOGIN_DEBUG] " . trim($line));
     }
 }

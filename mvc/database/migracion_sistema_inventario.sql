@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS inventario_lote (
 CREATE TABLE IF NOT EXISTS movimiento_inventario (
     id_mov INT AUTO_INCREMENT PRIMARY KEY,
     fecha_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    tipo ENUM('ENTRADA', 'SALIDA', 'AJUSTE') NOT NULL,
+    tipo ENUM('ENTRADA', 'SALIDA', 'AJUSTE', 'EDICION') NOT NULL,
     cantidad INT NOT NULL,
     motivo VARCHAR(200),
     id_lote INT NOT NULL,

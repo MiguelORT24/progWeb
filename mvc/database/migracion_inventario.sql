@@ -3,194 +3,150 @@
 -- Base de Datos: inventario
 -- Fecha: 2025-11-22
 -- =====================================================
--- IMPORTANTE: Este script crea la base de datos desde cero
--- Si la base de datos ya existe, será eliminada y recreada
--- =====================================================
 
--- Eliminar la base de datos si existe (CUIDADO: esto borra todos los datos)
 DROP DATABASE IF EXISTS inventario;
-
--- Crear la base de datos
 CREATE DATABASE inventario CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- Seleccionar la base de datos
 USE inventario;
 
 -- =====================================================
--- Tabla: usuarios
--- Descripción: Usuarios del sistema
+-- Tabla: marca
 -- =====================================================
-CREATE TABLE IF NOT EXISTS usuarios (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    usuario_nombre VARCHAR(100) NOT NULL,
-    usuario_email VARCHAR(100) NOT NULL UNIQUE,
-    usuario_password VARCHAR(255) NOT NULL,
-    usuario_nivel INT DEFAULT 1,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_usuario_email (usuario_email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE marca (
+    id_marca INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =====================================================
--- Tabla: categorias
--- Descripción: Categorías de productos
+-- Tabla: categoria
 -- =====================================================
-CREATE TABLE IF NOT EXISTS categorias (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    categoria_nombre VARCHAR(100) NOT NULL,
-    categoria_descripcion TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_categoria_nombre (categoria_nombre)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE categoria (
+    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =====================================================
--- Tabla: proveedores
--- Descripción: Proveedores de productos
+-- Tabla: equipo
 -- =====================================================
-CREATE TABLE IF NOT EXISTS proveedores (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    proveedor_nombre VARCHAR(150) NOT NULL,
-    proveedor_contacto VARCHAR(100),
-    proveedor_telefono VARCHAR(20),
-    proveedor_email VARCHAR(100),
-    proveedor_direccion TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_proveedor_nombre (proveedor_nombre)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE equipo (
+    id_equipo INT AUTO_INCREMENT PRIMARY KEY,
+    sku VARCHAR(50) NOT NULL UNIQUE,
+    tipo VARCHAR(100),
+    descripcion TEXT,
+    id_marca INT,
+    id_categoria INT,
+    FOREIGN KEY (id_marca) REFERENCES marca(id_marca) ON DELETE SET NULL,
+    FOREIGN KEY (id_categoria) REFERENCES categoria(id_categoria) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =====================================================
--- Tabla: productos
--- Descripción: Productos del inventario
+-- Tabla: ubicacion
 -- =====================================================
-CREATE TABLE IF NOT EXISTS productos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    producto_codigo VARCHAR(50) NOT NULL UNIQUE,
-    producto_nombre VARCHAR(150) NOT NULL,
-    producto_descripcion TEXT,
-    producto_precio_compra DECIMAL(10,2) NOT NULL,
-    producto_precio_venta DECIMAL(10,2) NOT NULL,
-    producto_stock INT DEFAULT 0,
-    producto_stock_minimo INT DEFAULT 0,
-    producto_foto LONGBLOB,
-    categoria_id INT,
-    proveedor_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_producto_codigo (producto_codigo),
-    INDEX idx_producto_nombre (producto_nombre),
-    INDEX idx_categoria (categoria_id),
-    INDEX idx_proveedor (proveedor_id),
-    FOREIGN KEY (categoria_id) REFERENCES categorias(id) ON DELETE SET NULL,
-    FOREIGN KEY (proveedor_id) REFERENCES proveedores(id) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE ubicacion (
+    id_ubicacion INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =====================================================
--- Tabla: movimientos
--- Descripción: Movimientos de inventario (entradas/salidas)
+-- Tabla: inventario_lote
 -- =====================================================
-CREATE TABLE IF NOT EXISTS movimientos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    producto_id INT NOT NULL,
-    movimiento_tipo ENUM('entrada', 'salida') NOT NULL,
-    movimiento_cantidad INT NOT NULL,
-    movimiento_motivo VARCHAR(200),
-    movimiento_precio_unitario DECIMAL(10,2),
-    usuario_id INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_producto (producto_id),
-    INDEX idx_tipo (movimiento_tipo),
-    INDEX idx_fecha (created_at),
-    INDEX idx_usuario (usuario_id),
-    FOREIGN KEY (producto_id) REFERENCES productos(id) ON DELETE CASCADE,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE inventario_lote (
+    id_lote INT AUTO_INCREMENT PRIMARY KEY,
+    cantidad INT NOT NULL,
+    estado VARCHAR(50),
+    fecha_ingreso DATE,
+    id_equipo INT,
+    id_ubicacion INT,
+    FOREIGN KEY (id_equipo) REFERENCES equipo(id_equipo) ON DELETE CASCADE,
+    FOREIGN KEY (id_ubicacion) REFERENCES ubicacion(id_ubicacion) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =====================================================
--- Datos de Ejemplo: Usuarios
+-- Tabla: usuario
 -- =====================================================
--- NOTA: La contraseña 'admin123' debe ser hasheada con password_hash() de PHP
--- Por ahora, ejecuta este UPDATE después de crear el usuario desde la interfaz
--- o usa el siguiente hash que corresponde a 'admin123':
--- Hash generado con: password_hash('admin123', PASSWORD_DEFAULT)
-INSERT INTO usuarios (usuario_nombre, usuario_email, usuario_password, usuario_nivel) VALUES
-('Administrador', 'admin@inventario.com', '$2y$10$e0MYzXyjpJS7Pd2ALwlOPeRN.FdwXQXdxQzXgXpFJXi.XqKJQqKqW', 1);
+CREATE TABLE usuario (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    contrasena VARCHAR(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =====================================================
--- Datos de Ejemplo: Categorías
+-- Tabla: movimiento_inventario
 -- =====================================================
-INSERT INTO categorias (categoria_nombre, categoria_descripcion) VALUES
-('Electrónica', 'Productos electrónicos y tecnológicos'),
-('Alimentos', 'Productos alimenticios y bebidas'),
-('Ropa', 'Prendas de vestir y accesorios'),
-('Hogar', 'Artículos para el hogar y decoración'),
-('Oficina', 'Material de oficina y papelería');
+CREATE TABLE movimiento_inventario (
+    id_mov INT AUTO_INCREMENT PRIMARY KEY,
+    fecha_hora DATETIME NOT NULL,
+    tipo ENUM('entrada', 'salida', 'edicion') NOT NULL,
+    cantidad INT NOT NULL,
+    motivo VARCHAR(200),
+    id_lote INT,
+    id_usuario INT,
+    FOREIGN KEY (id_lote) REFERENCES inventario_lote(id_lote) ON DELETE CASCADE,
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =====================================================
--- Datos de Ejemplo: Proveedores
+-- Datos de Ejemplo: Marca
 -- =====================================================
-INSERT INTO proveedores (proveedor_nombre, proveedor_contacto, proveedor_telefono, proveedor_email, proveedor_direccion) VALUES
-('TechSupply S.A.', 'Juan Pérez', '555-1234', 'contacto@techsupply.com', 'Av. Tecnología 123, Ciudad'),
-('AlimCorp', 'María González', '555-5678', 'ventas@alimcorp.com', 'Calle Comercio 456, Ciudad'),
-('Textiles del Norte', 'Carlos Ramírez', '555-9012', 'info@textilesnorte.com', 'Zona Industrial 789, Ciudad');
+INSERT INTO marca (nombre) VALUES
+('Hikvision'),
+('Dahua'),
+('Bosch'),
+('Axis'),
+('Honeywell');
 
 -- =====================================================
--- Datos de Ejemplo: Productos
+-- Datos de Ejemplo: Categoría
 -- =====================================================
-INSERT INTO productos (producto_codigo, producto_nombre, producto_descripcion, producto_precio_compra, producto_precio_venta, producto_stock, producto_stock_minimo, categoria_id, proveedor_id) VALUES
-('ELEC001', 'Laptop HP 15"', 'Laptop HP 15 pulgadas, 8GB RAM, 256GB SSD', 8500.00, 12000.00, 15, 5, 1, 1),
-('ELEC002', 'Mouse Inalámbrico', 'Mouse inalámbrico ergonómico', 150.00, 250.00, 50, 10, 1, 1),
-('ALIM001', 'Café Premium 500g', 'Café molido premium 500 gramos', 80.00, 150.00, 100, 20, 2, 2),
-('ROPA001', 'Camisa Formal Blanca', 'Camisa formal de vestir color blanco', 200.00, 400.00, 30, 10, 3, 3),
-('OFIC001', 'Resma Papel A4', 'Resma de papel bond A4 500 hojas', 60.00, 100.00, 200, 50, 5, 1);
+INSERT INTO categoria (nombre) VALUES
+('Cámaras de Seguridad'),
+('Sensores de Movimiento'),
+('Sensores Ambientales'),
+('Control de Acceso'),
+('Redes y Comunicación');
 
 -- =====================================================
--- Vista: Productos con Información Completa
+-- Datos de Ejemplo: Equipo
 -- =====================================================
-CREATE OR REPLACE VIEW vista_productos_completa AS
-SELECT 
-    p.id,
-    p.producto_codigo,
-    p.producto_nombre,
-    p.producto_descripcion,
-    p.producto_precio_compra,
-    p.producto_precio_venta,
-    p.producto_stock,
-    p.producto_stock_minimo,
-    p.producto_foto,
-    c.categoria_nombre,
-    pr.proveedor_nombre,
-    pr.proveedor_contacto,
-    p.created_at,
-    p.updated_at,
-    CASE 
-        WHEN p.producto_stock <= p.producto_stock_minimo THEN 'BAJO'
-        WHEN p.producto_stock <= (p.producto_stock_minimo * 1.5) THEN 'MEDIO'
-        ELSE 'NORMAL'
-    END AS nivel_stock
-FROM productos p
-LEFT JOIN categorias c ON p.categoria_id = c.id
-LEFT JOIN proveedores pr ON p.proveedor_id = pr.id;
+INSERT INTO equipo (sku, tipo, descripcion, id_marca, id_categoria) VALUES
+('CAM001', 'Cámara IP', 'Cámara IP Hikvision 4MP con visión nocturna', 1, 1),
+('CAM002', 'Cámara PTZ', 'Cámara PTZ Dahua con zoom óptico 30x', 2, 1),
+('SEN001', 'Sensor PIR', 'Sensor de movimiento Bosch PIR para interiores', 3, 2),
+('SEN002', 'Sensor Ambiental', 'Sensor Axis de temperatura y humedad', 4, 3),
+('ACC001', 'Control Biométrico', 'Terminal Honeywell de control de acceso biométrico', 5, 4);
 
 -- =====================================================
--- Vista: Movimientos con Información Completa
+-- Datos de Ejemplo: Ubicación
 -- =====================================================
-CREATE OR REPLACE VIEW vista_movimientos_completa AS
-SELECT 
-    m.id,
-    m.producto_id,
-    p.producto_codigo,
-    p.producto_nombre,
-    m.movimiento_tipo,
-    m.movimiento_cantidad,
-    m.movimiento_motivo,
-    m.movimiento_precio_unitario,
-    m.movimiento_cantidad * m.movimiento_precio_unitario AS movimiento_total,
-    u.usuario_nombre,
-    m.created_at
-FROM movimientos m
-INNER JOIN productos p ON m.producto_id = p.id
-LEFT JOIN usuarios u ON m.usuario_id = u.id
-ORDER BY m.created_at DESC;
+INSERT INTO ubicacion (nombre) VALUES
+('Almacén Central'),
+('Sucursal Norte'),
+('Sucursal Sur'),
+('Sucursal Este'),
+('Sucursal Oeste');
 
 -- =====================================================
--- Fin del Script de Migración
+-- Datos de Ejemplo: Inventario Lote
 -- =====================================================
+INSERT INTO inventario_lote (cantidad, estado, fecha_ingreso, id_equipo, id_ubicacion) VALUES
+(20, 'DISPONIBLE', '2025-11-01', 1, 1),
+(10, 'DISPONIBLE', '2025-11-05', 2, 2),
+(50, 'DISPONIBLE', '2025-11-10', 3, 3),
+(15, 'DISPONIBLE', '2025-11-15', 4, 4),
+(5,  'RESERVADO',  '2025-11-20', 5, 5);
+
+-- =====================================================
+-- Datos de Ejemplo: Usuario
+-- =====================================================
+-- Contraseña 'Admin123!' hasheada con password_hash()
+INSERT INTO usuario (nombre, email, contrasena) VALUES
+('Administrador', 'admin@inventario.com', '$2y$12$i50oEEKxCI0DP4kM9j8zc.qWJB1u5sv5wnO0Q4pNn0UDIa3dbMSTO');
+
+-- =====================================================
+-- Datos de Ejemplo: Movimiento Inventario
+-- =====================================================
+INSERT INTO movimiento_inventario (fecha_hora, tipo, cantidad, motivo, id_lote, id_usuario) VALUES
+('2025-11-22 09:00:00', 'entrada', 5, 'Compra inicial de cámaras', 1, 1),
+('2025-11-22 10:30:00', 'salida', 2, 'Instalación en sucursal norte', 2, 1),
+('2025-11-23 14:15:00', 'entrada', 20, 'Reposición de sensores PIR', 3, 1),
+('2025-11-24 11:00:00', 'salida', 1, 'Prueba de sensor ambiental', 4, 1);

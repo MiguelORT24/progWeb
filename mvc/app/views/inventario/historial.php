@@ -48,8 +48,20 @@
                                 <tr>
                                     <td><?php echo date('d/m/Y H:i', strtotime($mov['fecha_hora'])); ?></td>
                                     <td>
-                                        <span class="badge <?php echo $mov['tipo'] == 'ENTRADA' ? 'bg-success' : 'bg-danger'; ?>">
-                                            <?php echo $mov['tipo']; ?>
+                                        <?php 
+                                            $tipo = strtolower($mov['tipo']);
+                                            if ($tipo === 'entrada') {
+                                                $badge = 'bg-success';
+                                            } elseif ($tipo === 'salida') {
+                                                $badge = 'bg-danger';
+                                            } elseif ($tipo === 'edicion') {
+                                                $badge = 'bg-info text-dark';
+                                            } else {
+                                                $badge = 'bg-secondary';
+                                            }
+                                        ?>
+                                        <span class="badge <?php echo $badge; ?>">
+                                            <?php echo ucfirst($mov['tipo']); ?>
                                         </span>
                                     </td>
                                     <td><?php echo $mov['cantidad']; ?></td>

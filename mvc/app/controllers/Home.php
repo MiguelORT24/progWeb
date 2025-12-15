@@ -7,12 +7,10 @@
 class Home extends Controller {
     private $loteModel;
     private $equipoModel;
-    private $compraModel;
 
     public function __construct() {
         $this->loteModel = $this->model('InventarioLote');
         $this->equipoModel = $this->model('Equipo');
-        $this->compraModel = $this->model('Compra');
     }
 
     /**
@@ -41,22 +39,12 @@ class Home extends Controller {
         
         // Stock bajo
         $stock_bajo = $this->loteModel->stockBajo(10);
-        
-        // Compras pendientes (solo si puede confirmar)
-        $compras_pendientes = [];
-        if (puedeConfirmar()) {
-            $compras = $this->compraModel->all();
-            $compras_pendientes = array_filter($compras, function($c) {
-                return $c['estado'] == 'PENDIENTE';
-            });
-        }
-        
+
         $data = [
             'titulo' => 'Dashboard - Sistema de Inventario',
             'total_productos' => $total_productos,
             'total_unidades' => $total_unidades,
             'stock_bajo' => $stock_bajo,
-            'compras_pendientes' => $compras_pendientes,
             'usuario' => $_SESSION['usuario_nombre'] ?? 'Invitado',
             'rol' => $_SESSION['usuario_rol'] ?? 'LECTOR'
         ];

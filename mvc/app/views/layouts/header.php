@@ -30,7 +30,7 @@
                         <a class="nav-link" href="<?php echo URLROOT; ?>/equipos">Equipos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo URLROOT; ?>/ventas">Salidas</a>
+                        <a class="nav-link" href="<?php echo URLROOT; ?>/movimientos">Salidas</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Catálogos</a>

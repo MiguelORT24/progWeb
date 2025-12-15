@@ -27,11 +27,11 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <li class="nav-item"> <a class="nav-link" href="<?= URLROOT ?>"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-                        <li class="nav-item"> <a class="nav-link" href="<?= URLROOT ?>/productos"><i class="fa fa-box"></i> Productos</a> </li>
-                        <li class="nav-item"> <a class="nav-link" href="<?= URLROOT ?>/categorias"><i class="fa fa-tags"></i> Categorías</a> </li>
-                        <li class="nav-item"> <a class="nav-link" href="<?= URLROOT ?>/proveedores"><i class="fa fa-truck"></i> Proveedores</a> </li>
-                        <li class="nav-item"> <a class="nav-link" href="<?= URLROOT ?>/movimientos"><i class="fa fa-exchange-alt"></i> Movimientos</a> </li>
-                        <li class="nav-item"> <a class="nav-link" href="<?= URLROOT ?>/usuarios"><i class="fa fa-users"></i> Usuarios</a> </li>
+                        <li class="nav-item"> <a class="nav-link" href="<?= URLROOT ?>/inventario"><i class="fa fa-box"></i> Inventario</a> </li>
+                        <li class="nav-item"> <a class="nav-link" href="<?= URLROOT ?>/equipos"><i class="fa fa-boxes"></i> Equipos</a> </li>
+                        <li class="nav-item"> <a class="nav-link" href="<?= URLROOT ?>/marcas"><i class="fa fa-industry"></i> Marcas</a> </li>
+                        <li class="nav-item"> <a class="nav-link" href="<?= URLROOT ?>/ubicaciones"><i class="fa fa-map-marker-alt"></i> Ubicaciones</a> </li>
+                        <li class="nav-item"> <a class="nav-link" href="<?= URLROOT ?>/movimientos"><i class="fa fa-exchange-alt"></i> Salidas</a> </li>
                     </ul>
                             
                     <!-- logueo -->

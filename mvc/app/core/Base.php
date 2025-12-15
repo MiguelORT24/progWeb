@@ -21,6 +21,7 @@ class Base
     private $pwd = DBPWD;
     private $driver = DBDRIVER;
     private $host = DBHOST;
+    private $port = DBPORT;
     private $db = DBNAME;
     private $charset = 'utf8mb4';
 
@@ -34,7 +35,7 @@ class Base
             PDO::ATTR_EMULATE_PREPARES => false //Que no se puedan hacer inyecciones SQL
         ];
         try {
-            $dsn = "{$this->driver}:host={$this->host};dbname={$this->db};charset={$this->charset}";
+            $dsn = "{$this->driver}:host={$this->host};port={$this->port};dbname={$this->db};charset={$this->charset}";
             $this->dbh = new PDO($dsn, $this->user, $this->pwd, $options);
             //echo 'Conexion Exitosa a Base de Datos';
         } catch (PDOException $e) {

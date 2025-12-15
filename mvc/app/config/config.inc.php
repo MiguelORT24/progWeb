@@ -22,7 +22,8 @@ require_once APPROOT . 'helpers/helpers.inc.php';
 define ("DBUSER", 'root');
 define ("DBPWD", '');
 define ("DBDRIVER", 'mysql'); 
-define ("DBHOST", 'localhost');
+define ("DBHOST", '127.0.0.1'); // Forzar conexión TCP y evitar problemas de socket
+define ("DBPORT", '3306'); // Ajusta a 8889 si usas MAMP en macOS
 define ("DBNAME", 'inventario');
 
 //carga de clases core

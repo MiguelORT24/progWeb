@@ -8,21 +8,21 @@
  * Verificar si el usuario es Administrador
  */
 function esAdmin() {
-    return isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'ADMIN';
+    return ($_SESSION['usuario_rol'] ?? 'ADMIN') === 'ADMIN';
 }
 
 /**
  * Verificar si el usuario es de Almacén
  */
 function esAlmacen() {
-    return isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'ALMACEN';
+    return ($_SESSION['usuario_rol'] ?? 'ADMIN') === 'ALMACEN';
 }
 
 /**
  * Verificar si el usuario es Lector
  */
 function esLector() {
-    return isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'LECTOR';
+    return ($_SESSION['usuario_rol'] ?? 'ADMIN') === 'LECTOR';
 }
 
 /**

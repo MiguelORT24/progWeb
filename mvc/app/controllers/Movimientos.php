@@ -1,128 +1,87 @@
 <?php
 
 class Movimientos extends Controller {
-
-    private $modelo;
-    private $modeloProducto;
+    private $movimientoModel;
+    private $loteModel;
 
     public function __construct() {
-        $this->modelo = $this->model('Movimiento');
-        $this->modeloProducto = $this->model('Producto');
+        requerirAuth();
+        $this->movimientoModel = $this->model('Movimiento');
+        $this->loteModel = $this->model('InventarioLote');
     }
 
     /**
-     * Método index
+     * Historial de salidas
      */
     public function index() {
-        $data = $this->modelo->all();
+        $data = [
+            'titulo' => 'Salidas de inventario',
+            'movimientos' => $this->movimientoModel->salidas()
+        ];
+
         $this->view('movimientos/index', $data);
     }
 
     /**
-     * Método entrada - Registrar entrada de productos
+     * Registrar entrada
      */
     public function entrada() {
-        $metodo = $_SERVER['REQUEST_METHOD'];
-        $data = [
-            'accion' => 'Entrada',
-            'error' => [],
-            'productos' => $this->modeloProducto->all()
-        ];
-
-        if ($metodo == 'POST') {
-            $data = $_POST;
-            $data['movimiento_tipo'] = 'entrada';
-            $data['usuario_id'] = $_SESSION['usuario_id'] ?? null;
-            $data['productos'] = $this->modeloProducto->all();
-
-            $data['error'] = $this->validarMovimiento($data);
-
-            if (empty($data['error'])) {
-                unset($data['error']);
-                unset($data['productos']);
-
-                $resultado = $this->modelo->create($data);
-
-                if ($resultado) {
-                    refresh('/movimientos');
-                } else {
-                    $data['error'][] = 'Error al registrar la entrada';
-                }
-            }
-        }
-
-        $this->view('movimientos/entrada', $data);
+        $this->registrar('entrada');
     }
 
     /**
-     * Método salida - Registrar salida de productos
+     * Registrar salida
      */
     public function salida() {
-        $metodo = $_SERVER['REQUEST_METHOD'];
+        $this->registrar('salida');
+    }
+
+    private function registrar(string $tipo) {
+        $lotes = $this->loteModel->all();
         $data = [
-            'accion' => 'Salida',
-            'error' => [],
-            'productos' => $this->modeloProducto->all()
+            'titulo' => ucfirst($tipo) . ' de inventario',
+            'accion' => ucfirst($tipo),
+            'tipo' => $tipo,
+            'lotes' => $lotes,
+            'error' => []
         ];
 
-        if ($metodo == 'POST') {
-            $data = $_POST;
-            $data['movimiento_tipo'] = 'salida';
-            $data['usuario_id'] = $_SESSION['usuario_id'] ?? null;
-            $data['productos'] = $this->modeloProducto->all();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data['id_lote'] = $_POST['id_lote'] ?? null;
+            $data['cantidad'] = (int)($_POST['cantidad'] ?? 0);
+            $data['motivo'] = trim($_POST['motivo'] ?? '');
 
-            $data['error'] = $this->validarMovimiento($data);
+            $data['error'] = $this->validar($data);
 
             if (empty($data['error'])) {
-                // Verificar que hay stock suficiente
-                $producto = $this->modeloProducto->find($data['producto_id']);
-                if ($producto['producto_stock'] < $data['movimiento_cantidad']) {
-                    $data['error'][] = 'Stock insuficiente. Stock actual: ' . $producto['producto_stock'];
-                } else {
-                    unset($data['error']);
-                    unset($data['productos']);
-
-                    $resultado = $this->modelo->create($data);
-
-                    if ($resultado) {
-                        refresh('/movimientos');
-                    } else {
-                        $data['error'][] = 'Error al registrar la salida';
-                    }
+                try {
+                    $this->movimientoModel->create([
+                        'id_lote' => $data['id_lote'],
+                        'cantidad' => $data['cantidad'],
+                        'motivo' => $data['motivo'],
+                        'tipo' => $tipo,
+                        'id_usuario' => $_SESSION['usuario_id'] ?? null
+                    ]);
+                    $_SESSION['mensaje'] = 'Movimiento registrado correctamente';
+                    $_SESSION['tipo_mensaje'] = 'success';
+                    redirect('movimientos');
+                } catch (Exception $e) {
+                    $data['error'][] = $e->getMessage();
                 }
             }
         }
 
-        $this->view('movimientos/salida', $data);
+        $this->view('movimientos/registrar', $data);
     }
 
-    /**
-     * Método historial - Ver historial de un producto
-     */
-    public function historial($producto_id) {
-        $data = $this->modelo->porProducto($producto_id);
-        $producto = $this->modeloProducto->find($producto_id);
-        $this->view('movimientos/historial', ['movimientos' => $data, 'producto' => $producto]);
-    }
-
-    /**
-     * Método validarMovimiento
-     */
-    public function validarMovimiento($data) {
-        $error = [];
-
-        if (empty($data['producto_id'])) {
-            $error[] = 'Debe seleccionar un producto';
+    private function validar(array $data): array {
+        $errores = [];
+        if (empty($data['id_lote'])) {
+            $errores[] = 'Debe seleccionar un lote';
         }
-
-        if (empty($data['movimiento_cantidad']) || $data['movimiento_cantidad'] <= 0) {
-            $error[] = 'La cantidad debe ser mayor a 0';
+        if ($data['cantidad'] <= 0) {
+            $errores[] = 'La cantidad debe ser mayor a 0';
         }
-
-        if (empty($data['movimiento_precio_unitario']) || $data['movimiento_precio_unitario'] <= 0) {
-            $error[] = 'El precio unitario debe ser mayor a 0';
-        }
-
-        return $error;
+        return $errores;
     }
 }

@@ -18,7 +18,25 @@ class InventarioLote {
      * Obtener todos los lotes con información completa
      */
     public function all() {
-        $sql = "SELECT * FROM vista_inventario_completo";
+        $sql = "SELECT 
+                    il.id_lote,
+                    il.cantidad,
+                    il.estado,
+                    il.fecha_ingreso,
+                    e.id_equipo,
+                    e.sku,
+                    e.tipo,
+                    e.descripcion AS equipo_descripcion,
+                    m.nombre AS marca_nombre,
+                    c.nombre AS categoria_nombre,
+                    u.id_ubicacion,
+                    u.nombre AS ubicacion_nombre
+                FROM inventario_lote il
+                LEFT JOIN equipo e ON il.id_equipo = e.id_equipo
+                LEFT JOIN marca m ON e.id_marca = m.id_marca
+                LEFT JOIN categoria c ON e.id_categoria = c.id_categoria
+                LEFT JOIN ubicacion u ON il.id_ubicacion = u.id_ubicacion
+                ORDER BY il.fecha_ingreso DESC, il.id_lote DESC";
         $this->db->query($sql);
         return $this->db->resultSet();
     }
@@ -27,7 +45,25 @@ class InventarioLote {
      * Buscar un lote por ID
      */
     public function find($id) {
-        $sql = "SELECT * FROM vista_inventario_completo WHERE id_lote = :id";
+        $sql = "SELECT 
+                    il.id_lote,
+                    il.cantidad,
+                    il.estado,
+                    il.fecha_ingreso,
+                    e.id_equipo,
+                    e.sku,
+                    e.tipo,
+                    e.descripcion AS equipo_descripcion,
+                    m.nombre AS marca_nombre,
+                    c.nombre AS categoria_nombre,
+                    u.id_ubicacion,
+                    u.nombre AS ubicacion_nombre
+                FROM inventario_lote il
+                LEFT JOIN equipo e ON il.id_equipo = e.id_equipo
+                LEFT JOIN marca m ON e.id_marca = m.id_marca
+                LEFT JOIN categoria c ON e.id_categoria = c.id_categoria
+                LEFT JOIN ubicacion u ON il.id_ubicacion = u.id_ubicacion
+                WHERE il.id_lote = :id";
         $this->db->query($sql);
         $this->db->bind(':id', $id);
         return $this->db->single();
@@ -59,10 +95,11 @@ class InventarioLote {
             $id_lote = $this->db->lastInsertId();
             
             // Crear movimiento de entrada
-            $sqlMov = "INSERT INTO movimiento_inventario (tipo, id_lote, cantidad, motivo, id_usuario) 
-                       VALUES ('ENTRADA', :id_lote, :cantidad, :motivo, :id_usuario)";
+            $sqlMov = "INSERT INTO movimiento_inventario (fecha_hora, tipo, id_lote, cantidad, motivo, id_usuario) 
+                       VALUES (:fecha_hora, 'entrada', :id_lote, :cantidad, :motivo, :id_usuario)";
             
             $this->db->query($sqlMov);
+            $this->db->bind(':fecha_hora', date('Y-m-d H:i:s'));
             $this->db->bind(':id_lote', $id_lote);
             $this->db->bind(':cantidad', $data['cantidad']);
             $this->db->bind(':motivo', 'Nuevo lote ingresado');
@@ -91,23 +128,51 @@ class InventarioLote {
             return $this->delete($id);
         }
         
-        $sql = "UPDATE inventario_lote 
-                SET id_equipo = :id_equipo, 
-                    id_ubicacion = :id_ubicacion, 
-                    cantidad = :cantidad, 
-                    estado = :estado, 
-                    fecha_ingreso = :fecha_ingreso 
-                WHERE id_lote = :id";
-        
-        $this->db->query($sql);
-        $this->db->bind(':id', $id);
-        $this->db->bind(':id_equipo', $data['id_equipo']);
-        $this->db->bind(':id_ubicacion', $data['id_ubicacion']);
-        $this->db->bind(':cantidad', $data['cantidad']);
-        $this->db->bind(':estado', $data['estado']);
-        $this->db->bind(':fecha_ingreso', $data['fecha_ingreso']);
-        
-        return $this->db->execute();
+        try {
+            $this->db->beginTransaction();
+
+            $sql = "UPDATE inventario_lote 
+                    SET id_equipo = :id_equipo, 
+                        id_ubicacion = :id_ubicacion, 
+                        cantidad = :cantidad, 
+                        estado = :estado, 
+                        fecha_ingreso = :fecha_ingreso 
+                    WHERE id_lote = :id";
+            
+            $this->db->query($sql);
+            $this->db->bind(':id', $id);
+            $this->db->bind(':id_equipo', $data['id_equipo']);
+            $this->db->bind(':id_ubicacion', $data['id_ubicacion']);
+            $this->db->bind(':cantidad', $data['cantidad']);
+            $this->db->bind(':estado', $data['estado']);
+            $this->db->bind(':fecha_ingreso', $data['fecha_ingreso']);
+            
+            if (!$this->db->execute()) {
+                $this->db->rollBack();
+                return false;
+            }
+
+            // Registrar movimiento de edición con la nueva cantidad
+            $sqlMov = "INSERT INTO movimiento_inventario (fecha_hora, tipo, cantidad, motivo, id_lote, id_usuario)
+                       VALUES (:fecha_hora, 'edicion', :cantidad, :motivo, :id_lote, :id_usuario)";
+            $this->db->query($sqlMov);
+            $this->db->bind(':fecha_hora', date('Y-m-d H:i:s'));
+            $this->db->bind(':cantidad', $data['cantidad']);
+            $this->db->bind(':motivo', $data['motivo'] ?? 'Edicion de lote');
+            $this->db->bind(':id_lote', $id);
+            $this->db->bind(':id_usuario', $_SESSION['usuario_id'] ?? null);
+
+            if (!$this->db->execute()) {
+                $this->db->rollBack();
+                return false;
+            }
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            return false;
+        }
     }
 
     /**
@@ -151,7 +216,25 @@ class InventarioLote {
      * Búsqueda avanzada con filtros (RF-08)
      */
     public function buscar($filtros = []) {
-        $sql = "SELECT * FROM vista_inventario_completo WHERE 1=1";
+        $sql = "SELECT 
+                    il.id_lote,
+                    il.cantidad,
+                    il.estado,
+                    il.fecha_ingreso,
+                    e.id_equipo,
+                    e.sku,
+                    e.tipo,
+                    e.descripcion AS equipo_descripcion,
+                    m.nombre AS marca_nombre,
+                    c.nombre AS categoria_nombre,
+                    u.id_ubicacion,
+                    u.nombre AS ubicacion_nombre
+                FROM inventario_lote il
+                LEFT JOIN equipo e ON il.id_equipo = e.id_equipo
+                LEFT JOIN marca m ON e.id_marca = m.id_marca
+                LEFT JOIN categoria c ON e.id_categoria = c.id_categoria
+                LEFT JOIN ubicacion u ON il.id_ubicacion = u.id_ubicacion
+                WHERE 1=1";
         
         // Filtro por tipo de equipo
         if (!empty($filtros['tipo'])) {
@@ -186,9 +269,9 @@ class InventarioLote {
             $sql .= " AND fecha_ingreso <= :fecha_hasta";
         }
         
-        // Búsqueda por SKU
+        // Búsqueda por SKU (match exacto)
         if (!empty($filtros['sku'])) {
-            $sql .= " AND sku LIKE :sku";
+            $sql .= " AND UPPER(sku) = :sku";
         }
         
         $sql .= " ORDER BY fecha_ingreso DESC";
@@ -218,7 +301,7 @@ class InventarioLote {
             $this->db->bind(':fecha_hasta', $filtros['fecha_hasta']);
         }
         if (!empty($filtros['sku'])) {
-            $this->db->bind(':sku', "%{$filtros['sku']}%");
+            $this->db->bind(':sku', strtoupper(trim($filtros['sku'])));
         }
         
         return $this->db->resultSet();
@@ -241,9 +324,18 @@ class InventarioLote {
      * Listar lotes disponibles
      */
     public function lotesDisponibles() {
-        $sql = "SELECT * FROM vista_inventario_completo 
-                WHERE estado = 'DISPONIBLE' AND cantidad > 0
-                ORDER BY fecha_ingreso";
+        $sql = "SELECT 
+                    il.id_lote,
+                    il.cantidad,
+                    il.estado,
+                    il.fecha_ingreso,
+                    e.sku,
+                    u.nombre AS ubicacion_nombre
+                FROM inventario_lote il
+                LEFT JOIN equipo e ON il.id_equipo = e.id_equipo
+                LEFT JOIN ubicacion u ON il.id_ubicacion = u.id_ubicacion
+                WHERE il.estado = 'DISPONIBLE' AND il.cantidad > 0
+                ORDER BY il.fecha_ingreso";
         $this->db->query($sql);
         return $this->db->resultSet();
     }
@@ -252,9 +344,20 @@ class InventarioLote {
      * Lotes por ubicación
      */
     public function lotesPorUbicacion($ubicacion_id) {
-        $sql = "SELECT * FROM vista_inventario_completo 
-                WHERE id_ubicacion = :id_ubicacion
-                ORDER BY sku";
+        $sql = "SELECT 
+                    il.id_lote,
+                    il.cantidad,
+                    il.estado,
+                    il.fecha_ingreso,
+                    e.sku,
+                    e.tipo,
+                    e.descripcion AS equipo_descripcion,
+                    u.nombre AS ubicacion_nombre
+                FROM inventario_lote il
+                LEFT JOIN equipo e ON il.id_equipo = e.id_equipo
+                LEFT JOIN ubicacion u ON il.id_ubicacion = u.id_ubicacion
+                WHERE il.id_ubicacion = :id_ubicacion
+                ORDER BY e.sku";
         $this->db->query($sql);
         $this->db->bind(':id_ubicacion', $ubicacion_id);
         return $this->db->resultSet();
@@ -264,9 +367,19 @@ class InventarioLote {
      * Obtener historial de movimientos de un lote (RF-09)
      */
     public function historialMovimientos($id) {
-        $sql = "SELECT * FROM vista_movimientos_completo 
-                WHERE id_lote = :id_lote
-                ORDER BY fecha_hora DESC";
+        $sql = "SELECT 
+                    mi.id_mov,
+                    mi.fecha_hora,
+                    mi.tipo,
+                    mi.cantidad,
+                    mi.motivo,
+                    u.nombre AS usuario_nombre,
+                    il.cantidad AS lote_cantidad_actual
+                FROM movimiento_inventario mi
+                LEFT JOIN usuario u ON mi.id_usuario = u.id_usuario
+                LEFT JOIN inventario_lote il ON mi.id_lote = il.id_lote
+                WHERE mi.id_lote = :id_lote
+                ORDER BY mi.fecha_hora DESC";
         $this->db->query($sql);
         $this->db->bind(':id_lote', $id);
         return $this->db->resultSet();
@@ -298,7 +411,7 @@ class InventarioLote {
     }
 
     /**
-     * Lotes con stock bajo (menos de 5 unidades disponibles)
+     * Productos con stock bajo (suma de todas las unidades, sin importar estado)
      */
     public function stockBajo($limite = 10) {
         $sql = "SELECT 
@@ -308,17 +421,16 @@ class InventarioLote {
                     e.descripcion AS equipo_descripcion,
                     m.nombre AS marca_nombre,
                     c.nombre AS categoria_nombre,
-                    SUM(il.cantidad) AS cantidad,
+                    COALESCE(SUM(il.cantidad), 0) AS cantidad,
                     MIN(il.fecha_ingreso) AS fecha_ingreso
-                FROM inventario_lote il
-                INNER JOIN equipo e ON il.id_equipo = e.id_equipo
+                FROM equipo e
+                LEFT JOIN inventario_lote il ON e.id_equipo = il.id_equipo
                 LEFT JOIN marca m ON e.id_marca = m.id_marca
                 LEFT JOIN categoria c ON e.id_categoria = c.id_categoria
-                WHERE il.estado = 'DISPONIBLE'
                 GROUP BY e.id_equipo, e.sku, e.tipo, e.descripcion, m.nombre, c.nombre
-                HAVING SUM(il.cantidad) <= :limite
+                HAVING COALESCE(SUM(il.cantidad), 0) <= :limite
                 ORDER BY cantidad ASC";
-                
+
         $this->db->query($sql);
         $this->db->bind(':limite', $limite);
         return $this->db->resultSet();
@@ -335,44 +447,44 @@ class InventarioLote {
                     e.descripcion,
                     m.nombre AS marca_nombre,
                     c.nombre AS categoria_nombre,
-                    SUM(CASE WHEN il.estado = 'DISPONIBLE' THEN il.cantidad ELSE 0 END) AS cantidad_disponible,
-                    SUM(CASE WHEN il.estado = 'RESERVADO' THEN il.cantidad ELSE 0 END) AS cantidad_reservada,
-                    SUM(il.cantidad) AS cantidad_total,
-                    COUNT(il.id_lote) AS total_lotes
+                    COALESCE(SUM(CASE WHEN il.estado = 'DISPONIBLE' THEN il.cantidad ELSE 0 END),0) AS cantidad_disponible,
+                    COALESCE(SUM(CASE WHEN il.estado = 'RESERVADO' THEN il.cantidad ELSE 0 END),0) AS cantidad_reservada,
+                    COALESCE(SUM(il.cantidad),0) AS cantidad_total,
+                    COALESCE(COUNT(il.id_lote),0) AS total_lotes
                 FROM equipo e
                 LEFT JOIN inventario_lote il ON e.id_equipo = il.id_equipo
                 LEFT JOIN marca m ON e.id_marca = m.id_marca
                 LEFT JOIN categoria c ON e.id_categoria = c.id_categoria
                 WHERE 1=1";
-        
-        // Aplicar filtros
+
+        $params = [];
+
         if (!empty($filtros['sku'])) {
-            $sql .= " AND (e.sku LIKE :sku OR e.descripcion LIKE :sku)";
+            $sql .= " AND UPPER(e.sku) = :sku";
+            $params[':sku'] = strtoupper(trim($filtros['sku']));
         }
         if (!empty($filtros['tipo'])) {
-            $sql .= " AND e.tipo = :tipo";
+            $sql .= " AND UPPER(e.tipo) LIKE :tipo";
+            $params[':tipo'] = strtoupper($filtros['tipo']) . '%';
         }
         if (!empty($filtros['marca'])) {
             $sql .= " AND e.id_marca = :marca";
+            $params[':marca'] = $filtros['marca'];
         }
-        
+        if (!empty($filtros['categoria'])) {
+            $sql .= " AND e.id_categoria = :categoria";
+            $params[':categoria'] = $filtros['categoria'];
+        }
+
         $sql .= " GROUP BY e.id_equipo, e.sku, e.tipo, e.descripcion, m.nombre, c.nombre
-                  HAVING cantidad_total > 0
                   ORDER BY e.sku";
-        
+
         $this->db->query($sql);
-        
-        // Bind filtros
-        if (!empty($filtros['sku'])) {
-            $this->db->bind(':sku', "%{$filtros['sku']}%");
+
+        foreach ($params as $param => $valor) {
+            $this->db->bind($param, $valor);
         }
-        if (!empty($filtros['tipo'])) {
-            $this->db->bind(':tipo', $filtros['tipo']);
-        }
-        if (!empty($filtros['marca'])) {
-            $this->db->bind(':marca', $filtros['marca']);
-        }
-        
+
         return $this->db->resultSet();
     }
 
@@ -381,68 +493,21 @@ class InventarioLote {
      * Ordenados por FIFO (primero los más antiguos)
      */
     public function lotesPorEquipo($id_equipo) {
-        $sql = "SELECT * FROM vista_inventario_completo 
-                WHERE id_equipo = :id_equipo
-                ORDER BY fecha_ingreso ASC, id_lote ASC";
+        $sql = "SELECT 
+                    il.id_lote,
+                    il.cantidad,
+                    il.estado,
+                    il.fecha_ingreso,
+                    il.id_equipo,
+                    il.id_ubicacion,
+                    u.nombre AS ubicacion_nombre
+                FROM inventario_lote il
+                LEFT JOIN ubicacion u ON il.id_ubicacion = u.id_ubicacion
+                WHERE il.id_equipo = :id_equipo
+                ORDER BY il.fecha_ingreso ASC, il.id_lote ASC";
         $this->db->query($sql);
         $this->db->bind(':id_equipo', $id_equipo);
         return $this->db->resultSet();
     }
 
-    /**
-     * Procesar una venta - reduce inventario y crea movimientos
-     */
-    public function procesarVenta($detalle, $venta_id, $usuario_id) {
-        try {
-            $this->db->beginTransaction();
-            
-            foreach ($detalle as $item) {
-                // Obtener lotes disponibles del equipo
-                $lotes = $this->lotesPorEquipo($item['id_equipo']);
-                
-                $cantidadRestante = $item['cantidad'];
-                
-                foreach ($lotes as $lote) {
-                    if ($cantidadRestante <= 0) break;
-                    if ($lote['estado'] != 'DISPONIBLE') continue;
-                    
-                    $cantidadARestar = min($cantidadRestante, $lote['cantidad']);
-                    $nuevaCantidad = $lote['cantidad'] - $cantidadARestar;
-                    
-                    // Actualizar cantidad del lote
-                    $this->actualizarCantidad($lote['id_lote'], $nuevaCantidad);
-                    
-                    // Crear movimiento de salida
-                    $sqlMov = "INSERT INTO movimiento_inventario (tipo, id_lote, cantidad, motivo, id_usuario) 
-                               VALUES ('SALIDA', :id_lote, :cantidad, :motivo, :id_usuario)";
-                    
-                    $this->db->query($sqlMov);
-                    $this->db->bind(':id_lote', $lote['id_lote']);
-                    $this->db->bind(':cantidad', $cantidadARestar);
-                    $this->db->bind(':motivo', "Venta #$venta_id confirmada");
-                    $this->db->bind(':id_usuario', $usuario_id);
-                    $this->db->execute();
-                    
-                    $cantidadRestante -= $cantidadARestar;
-                }
-                
-                if ($cantidadRestante > 0) {
-                    throw new Exception("Stock insuficiente para {$item['sku']}. Faltan $cantidadRestante unidades.");
-                }
-            }
-            
-            // Actualizar estado de la venta
-            $sqlUpdate = "UPDATE compra SET estado = 'CONFIRMADA' WHERE id_compra = :id";
-            $this->db->query($sqlUpdate);
-            $this->db->bind(':id', $venta_id);
-            $this->db->execute();
-            
-            $this->db->commit();
-            
-            return ['exito' => true];
-        } catch (Exception $e) {
-            $this->db->rollBack();
-            return ['exito' => false, 'error' => $e->getMessage()];
-        }
-    }
 }

@@ -130,9 +130,9 @@ class Equipo {
                 LEFT JOIN categoria c ON e.id_categoria = c.id_categoria
                 WHERE 1=1";
         
-        // Búsqueda por término (SKU o descripción)
+        // Búsqueda por término (SKU exacto)
         if (!empty($termino)) {
-            $sql .= " AND (e.sku LIKE :termino OR e.descripcion LIKE :termino)";
+            $sql .= " AND UPPER(e.sku) = :termino";
         }
         
         // Filtro por tipo
@@ -155,7 +155,7 @@ class Equipo {
         $this->db->query($sql);
         
         if (!empty($termino)) {
-            $this->db->bind(':termino', "%$termino%");
+            $this->db->bind(':termino', strtoupper(trim($termino)));
         }
         if (!empty($filtros['tipo'])) {
             $this->db->bind(':tipo', $filtros['tipo']);
@@ -188,6 +188,15 @@ class Equipo {
         $this->db->query($sql);
         $this->db->bind(':marca_id', $marca_id);
         return $this->db->resultSet();
+    }
+
+    /**
+     * Obtener los tipos disponibles (distintos) registrados en equipos
+     */
+    public function tiposDisponibles() {
+        $sql = "SELECT DISTINCT tipo FROM equipo WHERE tipo IS NOT NULL AND tipo <> '' ORDER BY tipo";
+        $this->db->query($sql);
+        return array_column($this->db->resultSet(), 'tipo');
     }
 
     /**
