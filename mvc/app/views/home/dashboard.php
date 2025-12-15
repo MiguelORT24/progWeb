@@ -89,6 +89,9 @@
                                 <i class="bi bi-plus-circle"></i> Nuevo Lote
                             </a>
                         <?php endif; ?>
+                        <a href="<?php echo URLROOT; ?>/movimientos/salida" class="btn btn-warning">
+                            <i class="bi bi-arrow-up-circle"></i> Agregar nueva salida
+                        </a>
                         <a href="<?php echo URLROOT; ?>/inventario/reporteDiario" class="btn btn-outline-danger">
                             <i class="bi bi-file-earmark-pdf"></i> Generar Reporte
                         </a>
