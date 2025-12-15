@@ -1,26 +1,15 @@
 <?php require_once APPROOT . '/views/layouts/header.php'; ?>
 
 <div class="container mt-4">
-    <h2><i class="bi bi-cart-plus"></i> Nueva Salida</h2>
+    <h2><i class="bi bi-box-arrow-right"></i> Nueva Salida</h2>
     
     <div class="card">
         <div class="card-body">
             <form action="<?php echo URLROOT; ?>/ventas/crear" method="POST" id="formVenta">
                 <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Cliente *</label>
-                        <select name="id_cliente" class="form-select" required>
-                            <option value="">Seleccione un cliente...</option>
-                            <?php foreach($data['clientes'] as $cliente): ?>
-                                <option value="<?php echo $cliente['id_cliente']; ?>">
-                                    <?php echo $cliente['nombre']; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Fecha</label>
-                        <input type="date" name="fecha" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+                    <div class="col-md-12">
+                        <label class="form-label">Fecha y Hora</label>
+                        <input type="datetime-local" name="fecha" class="form-control" value="<?php echo date('Y-m-d\TH:i'); ?>" readonly>
                     </div>
                 </div>
 

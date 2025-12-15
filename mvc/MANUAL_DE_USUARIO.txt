@@ -1,0 +1,650 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    MANUAL DE USUARIO - SISTEMA DE INVENTARIO
+                         Cámaras y Sensores de Seguridad
+═══════════════════════════════════════════════════════════════════════════════
+
+ÍNDICE
+------
+1. Inicio de Sesión
+2. Panel Principal (Dashboard)
+3. Gestión de Inventario
+4. Catálogo de Equipos
+5. Gestión de Salidas
+6. Catálogos Maestros
+7. Generación de Reportes
+8. Cerrar Sesión
+
+═══════════════════════════════════════════════════════════════════════════════
+
+1. INICIO DE SESIÓN
+═══════════════════════════════════════════════════════════════════════════════
+
+DESCRIPCIÓN:
+La pantalla de inicio de sesión es la primera interfaz que verá al acceder al 
+sistema. Permite autenticarse de forma segura para acceder a las funcionalidades.
+
+CÓMO USAR:
+----------
+a) Ingrese su correo electrónico en el campo "Email"
+   - Formato requerido: usuario@dominio.com
+   - Ejemplo: admin@inventario.com
+
+b) Ingrese su contraseña en el campo "Contraseña"
+   - Requisitos de seguridad:
+     * Entre 8 y 16 caracteres
+     * Al menos una letra mayúscula
+     * Al menos una letra minúscula
+     * Al menos un número
+     * Al menos un carácter especial (!@#$%^&*)
+     * No se permiten espacios
+
+c) Haga clic en el botón "Iniciar Sesión"
+
+CREDENCIALES DE PRUEBA:
+-----------------------
+Email: admin@inventario.com
+Contraseña: Admin123!
+
+MENSAJES DE ERROR:
+------------------
+- "El correo electrónico no es válido": Verifique el formato del email
+- "La contraseña no cumple con los requisitos": Revise los requisitos de seguridad
+- Mensaje de error en rojo: Credenciales incorrectas, intente nuevamente
+
+═══════════════════════════════════════════════════════════════════════════════
+
+2. PANEL PRINCIPAL (DASHBOARD)
+═══════════════════════════════════════════════════════════════════════════════
+
+DESCRIPCIÓN:
+El Dashboard es la pantalla principal después de iniciar sesión. Muestra un 
+resumen general del estado del inventario y proporciona accesos rápidos a las 
+funciones más utilizadas.
+
+ELEMENTOS DE LA PANTALLA:
+--------------------------
+
+A) TARJETAS DE ESTADÍSTICAS (parte superior):
+
+   📦 Total Equipos (Azul)
+   - Muestra la cantidad total de tipos de equipos registrados en el catálogo
+   
+   ✓ Lotes Disponibles (Verde)
+   - Cantidad de lotes de inventario que están disponibles para salida
+   
+   ⚠ Stock Bajo (Amarillo)
+   - Número de equipos que tienen stock por debajo del mínimo recomendado
+   
+   📋 Órdenes Pendientes (Celeste)
+   - Cantidad de salidas que están en estado PENDIENTE
+
+B) ACCESOS RÁPIDOS (parte inferior):
+
+   🗃️ Ver Inventario
+   - Accede directamente a la gestión completa de inventario
+   
+   ➕ Nuevo Lote
+   - Crea un nuevo lote de inventario rápidamente
+   
+   🛒 Nueva Compra
+   - Registra una nueva entrada de mercancía
+   
+   📝 Nueva Orden
+   - Genera una nueva orden de salida
+
+C) BOTÓN "GENERAR REPORTE DIARIO" (esquina superior derecha):
+   - Genera un PDF con el estado actual del inventario
+
+NAVEGACIÓN:
+-----------
+Use el menú superior para navegar entre las diferentes secciones del sistema.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+3. GESTIÓN DE INVENTARIO
+═══════════════════════════════════════════════════════════════════════════════
+
+DESCRIPCIÓN:
+Esta sección permite visualizar y administrar todos los lotes de inventario 
+agrupados por equipo. Es el corazón del sistema donde se controla el stock.
+
+ACCESO:
+-------
+- Desde el menú superior: clic en "Inventario"
+- Desde el Dashboard: botón "Ver Inventario"
+
+ELEMENTOS DE LA PANTALLA:
+--------------------------
+
+A) FILTROS DE BÚSQUEDA:
+
+   📌 SKU / Descripción
+   - Busca equipos por su código SKU o descripción
+   - Ejemplo: "CAM-001" o "Cámara IP"
+   
+   📌 Tipo
+   - Filtra por tipo de equipo:
+     * Todos: Muestra cámaras y sensores
+     * Cámaras: Solo equipos tipo cámara
+     * Sensores: Solo equipos tipo sensor
+   
+   📌 Marca
+   - Filtra por marca específica
+   - Muestra solo las marcas registradas en el sistema
+   
+   🔍 Botón "Buscar"
+   - Aplica los filtros seleccionados
+
+B) TABLA DE PRODUCTOS:
+
+   Columnas mostradas:
+   
+   • SKU: Código único del equipo (etiqueta gris)
+   • Tipo: Icono y nombre (🎥 Cámara o 📡 Sensor)
+   • Descripción: Nombre descriptivo del equipo
+   • Marca: Fabricante del equipo
+   • Disponible: Cantidad disponible para salida (etiqueta verde)
+   • Reservado: Cantidad reservada en órdenes pendientes (etiqueta amarilla)
+   • Total: Suma de disponible + reservado (número azul)
+   • Lotes: Cantidad de lotes diferentes de este equipo (etiqueta celeste)
+   • Acciones: Botón "Ver Lotes"
+
+C) BOTONES DE ACCIÓN:
+
+   📄 Generar Reporte
+   - Crea un PDF con el inventario actual
+   
+   ➕ Nuevo Lote
+   - Abre el formulario para crear un nuevo lote de inventario
+   - Nota: Solo visible si tiene permisos de creación
+
+CÓMO CREAR UN NUEVO LOTE:
+--------------------------
+
+1. Haga clic en el botón "Nuevo Lote"
+
+2. Complete el formulario:
+   
+   a) Seleccione el Equipo del catálogo
+   b) Ingrese la Cantidad de unidades
+   c) Seleccione la Ubicación en el almacén
+   d) Ingrese el Número de Lote (identificador único)
+   e) Seleccione la Fecha de Vencimiento (si aplica)
+   f) Agregue Observaciones adicionales (opcional)
+
+3. Haga clic en "Guardar"
+
+CÓMO VER LOS LOTES DE UN EQUIPO:
+---------------------------------
+
+1. En la tabla de inventario, localice el equipo deseado
+
+2. Haga clic en el botón "Ver Lotes" en la columna de Acciones
+
+3. Se mostrará una pantalla con todos los lotes de ese equipo:
+   
+   Información mostrada por lote:
+   - Número de Lote
+   - Ubicación en almacén
+   - Cantidad disponible
+   - Cantidad reservada
+   - Fecha de vencimiento
+   - Estado (Disponible/Agotado)
+   - Acciones: Editar o ver historial
+
+CÓMO EDITAR UN LOTE:
+--------------------
+
+1. Desde la vista de lotes, haga clic en el botón de edición (icono lápiz)
+
+2. Modifique los campos necesarios:
+   - Cantidad
+   - Ubicación
+   - Fecha de vencimiento
+   - Observaciones
+
+3. Haga clic en "Actualizar"
+
+Nota: No se puede editar el equipo ni el número de lote una vez creado.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+4. CATÁLOGO DE EQUIPOS
+═══════════════════════════════════════════════════════════════════════════════
+
+DESCRIPCIÓN:
+El catálogo de equipos es el maestro de productos. Aquí se definen los tipos 
+de cámaras y sensores que la empresa maneja, sin importar el inventario físico.
+
+ACCESO:
+-------
+- Desde el menú superior: clic en "Equipos"
+
+ELEMENTOS DE LA PANTALLA:
+--------------------------
+
+A) FILTROS DE BÚSQUEDA:
+
+   🔍 Buscar por SKU o descripción
+   - Campo de texto libre para búsqueda rápida
+   
+   🏷️ Todas las Marcas
+   - Filtra equipos por fabricante
+   
+   📁 Todas las Categorías
+   - Filtra por categoría de producto
+   
+   Botón "Buscar"
+   - Aplica los filtros
+
+B) TARJETAS DE EQUIPOS:
+
+   Cada equipo se muestra en una tarjeta que contiene:
+   
+   • SKU (título principal)
+   • Tipo (etiqueta celeste): CAMARA o SENSOR
+   • Marca | Categoría (texto pequeño)
+   • Descripción del equipo
+   • ID del equipo (pie de tarjeta)
+   • Botones de acción:
+     - 👁️ Ver: Muestra detalles completos del equipo
+     - ✏️ Editar: Modifica la información (requiere permisos)
+
+CÓMO CREAR UN NUEVO EQUIPO:
+----------------------------
+
+1. Haga clic en el botón "Nuevo Equipo" (esquina superior derecha)
+   Nota: Solo visible para usuarios con permisos de gestión de maestros
+
+2. Complete el formulario:
+   
+   a) SKU: Código único del equipo (ej: CAM-001)
+   b) Tipo: Seleccione CAMARA o SENSOR
+   c) Descripción: Nombre descriptivo del producto
+   d) Marca: Seleccione del catálogo de marcas
+   e) Categoría: Seleccione la categoría apropiada
+   f) Especificaciones técnicas (opcional)
+
+3. Haga clic en "Guardar"
+
+CÓMO VER DETALLES DE UN EQUIPO:
+--------------------------------
+
+1. Localice el equipo en la cuadrícula de tarjetas
+
+2. Haga clic en el botón "Ver" (icono de ojo)
+
+3. Se mostrará una pantalla con:
+   - Información general del equipo (SKU, tipo, marca, categoría, descripción)
+   - Stock total:
+     * Cantidad disponible
+     * Cantidad reservada
+     * Total general
+   - Acciones rápidas:
+     * Ver todos los lotes de este equipo
+     * Crear nuevo lote para este equipo
+
+CÓMO EDITAR UN EQUIPO:
+----------------------
+
+1. Haga clic en el botón "Editar" (icono de lápiz)
+   Nota: Requiere permisos de gestión de maestros
+
+2. Modifique los campos necesarios
+
+3. Haga clic en "Actualizar"
+
+Advertencia: Editar un equipo afecta a todos sus lotes de inventario.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+5. GESTIÓN DE SALIDAS
+═══════════════════════════════════════════════════════════════════════════════
+
+DESCRIPCIÓN:
+Esta sección permite registrar y gestionar las salidas de inventario (ventas, 
+entregas, asignaciones). Controla el flujo de equipos que salen del almacén.
+
+ACCESO:
+-------
+- Desde el menú superior: clic en "Salidas"
+
+ELEMENTOS DE LA PANTALLA:
+--------------------------
+
+A) TABLA DE SALIDAS:
+
+   Columnas mostradas:
+   
+   • ID: Número único de la salida
+   • Fecha: Fecha de registro
+   • Cliente: Nombre del cliente o destino
+   • Estado: 
+     - PENDIENTE (amarillo): Aún no confirmada
+     - CONFIRMADA (verde): Procesada y descontada del inventario
+     - CANCELADA (rojo): Anulada
+   • Acciones:
+     - 👁️ Ver: Muestra el detalle completo
+     - ✓ Confirmar: Procesa la salida (solo si está PENDIENTE)
+     - 🗑️ Eliminar: Cancela la salida (solo si está PENDIENTE)
+
+B) BOTÓN "NUEVA SALIDA":
+   - Crea una nueva orden de salida
+   - Requiere permisos de creación
+
+CÓMO CREAR UNA NUEVA SALIDA:
+-----------------------------
+
+1. Haga clic en el botón "Nueva Salida"
+
+2. Complete la información general:
+   
+   a) Seleccione el Cliente/Destino
+   b) Ingrese la Fecha de salida
+   c) Agregue Observaciones (opcional)
+
+3. Agregue los productos a la salida:
+   
+   Para cada producto:
+   a) Seleccione el Equipo
+   b) Seleccione el Lote específico
+   c) Ingrese la Cantidad a sacar
+   d) Haga clic en "Agregar"
+   
+   Nota: El sistema valida que haya stock disponible
+
+4. Revise el resumen de productos agregados
+
+5. Haga clic en "Guardar Salida"
+
+La salida se creará en estado PENDIENTE.
+
+CÓMO CONFIRMAR UNA SALIDA:
+--------------------------
+
+1. Localice la salida en estado PENDIENTE
+
+2. Haga clic en el botón "Confirmar" (icono de check verde)
+   Nota: Requiere permisos de confirmación
+
+3. Confirme la acción en el diálogo que aparece
+
+4. El sistema:
+   - Cambia el estado a CONFIRMADA
+   - Descuenta las cantidades del inventario
+   - Registra el movimiento en el historial
+   - Ya no se puede modificar ni eliminar
+
+CÓMO VER DETALLES DE UNA SALIDA:
+---------------------------------
+
+1. Haga clic en el botón "Ver" (icono de ojo)
+
+2. Se mostrará:
+   - Información general (ID, fecha, cliente, estado)
+   - Tabla de productos incluidos:
+     * SKU del equipo
+     * Descripción
+     * Número de lote
+     * Cantidad
+     * Precio unitario
+     * Subtotal
+   - Total de la salida
+   - Observaciones
+
+CÓMO ELIMINAR UNA SALIDA PENDIENTE:
+------------------------------------
+
+1. Localice la salida en estado PENDIENTE
+
+2. Haga clic en el botón "Eliminar" (icono de basura rojo)
+   Nota: Requiere permisos de eliminación
+
+3. Confirme la eliminación en el diálogo
+
+4. La salida cambiará a estado CANCELADA
+
+Importante: Solo se pueden eliminar salidas PENDIENTES. Las salidas CONFIRMADAS 
+no se pueden eliminar para mantener la integridad del inventario.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+6. CATÁLOGOS MAESTROS
+═══════════════════════════════════════════════════════════════════════════════
+
+DESCRIPCIÓN:
+Los catálogos maestros son tablas de referencia que se utilizan en todo el 
+sistema. Incluyen marcas y ubicaciones.
+
+ACCESO:
+-------
+- Desde el menú superior: clic en "Catálogos" → seleccione la opción deseada
+
+A) MARCAS
+═════════
+
+DESCRIPCIÓN:
+Catálogo de fabricantes de equipos (ej: Hikvision, Dahua, Axis).
+
+FUNCIONALIDADES:
+
+• Ver todas las marcas registradas
+• Crear nueva marca:
+  1. Clic en "Nueva Marca"
+  2. Ingrese el nombre de la marca
+  3. Agregue descripción (opcional)
+  4. Clic en "Guardar"
+
+• Editar marca existente:
+  1. Clic en el botón "Editar"
+  2. Modifique el nombre o descripción
+  3. Clic en "Actualizar"
+
+• Eliminar marca:
+  - Solo si no tiene equipos asociados
+  - Clic en "Eliminar" y confirme
+
+Nota: Requiere permisos de gestión de maestros para crear/editar/eliminar.
+
+B) UBICACIONES
+══════════════
+
+DESCRIPCIÓN:
+Catálogo de ubicaciones físicas en el almacén (ej: Estante A1, Bodega 2).
+
+FUNCIONALIDADES:
+
+• Ver todas las ubicaciones registradas
+• Crear nueva ubicación:
+  1. Clic en "Nueva Ubicación"
+  2. Ingrese el código de ubicación (ej: A1-B2)
+  3. Ingrese la descripción (ej: "Estante A, Nivel 1, Bahía 2")
+  4. Agregue capacidad máxima (opcional)
+  5. Clic en "Guardar"
+
+• Editar ubicación:
+  1. Clic en el botón "Editar"
+  2. Modifique los campos necesarios
+  3. Clic en "Actualizar"
+
+• Eliminar ubicación:
+  - Solo si no tiene lotes asignados
+  - Clic en "Eliminar" y confirme
+
+Nota: Requiere permisos de gestión de maestros para crear/editar/eliminar.
+
+IMPORTANCIA DE LOS CATÁLOGOS:
+------------------------------
+Los catálogos maestros deben configurarse ANTES de crear equipos y lotes, ya 
+que son referencias obligatorias. Mantenerlos organizados facilita la gestión 
+del inventario.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+7. GENERACIÓN DE REPORTES
+═══════════════════════════════════════════════════════════════════════════════
+
+DESCRIPCIÓN:
+El sistema genera reportes en formato PDF con información detallada del 
+inventario. Estos reportes son útiles para auditorías, análisis y respaldos.
+
+TIPOS DE REPORTES:
+------------------
+
+A) REPORTE DIARIO DE INVENTARIO
+
+   CONTENIDO:
+   - Fecha y hora de generación
+   - Lista completa de equipos en inventario
+   - Para cada equipo:
+     * SKU y descripción
+     * Marca
+     * Cantidad total
+     * Cantidad disponible
+     * Cantidad reservada
+     * Desglose por lotes:
+       - Número de lote
+       - Ubicación
+       - Cantidad
+       - Fecha de vencimiento
+   - Resumen de totales
+   - Alertas de stock bajo
+
+   CÓMO GENERAR:
+   1. Opción A: Desde el Dashboard, clic en "Generar Reporte Diario"
+   2. Opción B: Desde Inventario, clic en "Generar Reporte"
+   3. El PDF se abrirá en una nueva pestaña
+   4. Puede guardarlo o imprimirlo desde el navegador
+
+USOS RECOMENDADOS:
+------------------
+- Generar un reporte diario al inicio/fin de jornada
+- Antes y después de salidas importantes
+- Para auditorías mensuales
+- Como respaldo de información
+
+═══════════════════════════════════════════════════════════════════════════════
+
+8. CERRAR SESIÓN
+═══════════════════════════════════════════════════════════════════════════════
+
+DESCRIPCIÓN:
+Cierra su sesión de forma segura en el sistema.
+
+CÓMO CERRAR SESIÓN:
+-------------------
+
+1. En el menú superior derecho, haga clic en su nombre de usuario
+   (Muestra: Nombre Usuario (Rol))
+
+2. En el menú desplegable, seleccione "Salir"
+
+3. El sistema:
+   - Cierra su sesión
+   - Lo redirige a la pantalla de inicio de sesión
+   - Invalida su token de autenticación
+
+RECOMENDACIÓN:
+--------------
+Siempre cierre sesión cuando termine de usar el sistema, especialmente si está 
+en una computadora compartida. Esto protege la seguridad de la información.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+INFORMACIÓN ADICIONAL
+═══════════════════════════════════════════════════════════════════════════════
+
+ROLES Y PERMISOS:
+-----------------
+
+El sistema maneja diferentes roles de usuario con permisos específicos:
+
+• ADMINISTRADOR:
+  - Acceso completo a todas las funcionalidades
+  - Puede crear, editar y eliminar en todas las secciones
+  - Gestiona catálogos maestros
+  - Confirma salidas
+  - Genera reportes
+
+• OPERADOR:
+  - Puede crear lotes y salidas
+  - Puede ver inventario y equipos
+  - No puede editar catálogos maestros
+  - No puede confirmar salidas
+
+• CONSULTA:
+  - Solo puede ver información
+  - No puede crear, editar ni eliminar
+  - No puede confirmar salidas
+  - Puede generar reportes
+
+NAVEGACIÓN GENERAL:
+-------------------
+
+• Menú Superior:
+  - Siempre visible en todas las pantallas
+  - Permite navegar entre secciones principales
+  - Muestra su nombre de usuario y rol actual
+
+• Botones de Acción:
+  - Verde: Crear/Agregar
+  - Azul: Ver/Consultar
+  - Amarillo: Editar/Modificar
+  - Rojo: Eliminar/Cancelar
+  - Celeste: Información/Detalles
+
+• Mensajes del Sistema:
+  - Verde: Operación exitosa
+  - Rojo: Error o advertencia
+  - Amarillo: Información importante
+  - Azul: Información general
+
+CONSEJOS DE USO:
+----------------
+
+1. Use los filtros de búsqueda para encontrar información rápidamente
+
+2. Revise el Dashboard regularmente para monitorear el estado del inventario
+
+3. Confirme las salidas solo cuando esté seguro, ya que no se pueden revertir
+
+4. Mantenga actualizados los catálogos maestros (marcas, ubicaciones)
+
+5. Genere reportes periódicos como respaldo
+
+6. Verifique que haya stock disponible antes de crear una salida
+
+7. Use números de lote descriptivos para facilitar la trazabilidad
+
+8. Registre observaciones importantes en los lotes y salidas
+
+SOLUCIÓN DE PROBLEMAS COMUNES:
+-------------------------------
+
+• "No puedo crear un lote":
+  → Verifique que tenga permisos de creación
+  → Asegúrese de que el equipo exista en el catálogo
+  → Verifique que la ubicación esté registrada
+
+• "No aparece el botón de editar":
+  → Verifique que tenga los permisos necesarios
+  → Algunos elementos solo pueden editarse en estado PENDIENTE
+
+• "Error al confirmar salida":
+  → Verifique que haya stock disponible
+  → Asegúrese de que la salida esté en estado PENDIENTE
+  → Verifique que tenga permisos de confirmación
+
+• "No encuentro un equipo en el inventario":
+  → Use los filtros de búsqueda
+  → Verifique que el equipo tenga lotes creados
+  → Revise el catálogo de equipos
+
+SOPORTE:
+--------
+Para asistencia adicional o reportar problemas, contacte al administrador del 
+sistema.
+
+═══════════════════════════════════════════════════════════════════════════════
+                              FIN DEL MANUAL DE USUARIO
+═══════════════════════════════════════════════════════════════════════════════

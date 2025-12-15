@@ -37,7 +37,6 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="<?php echo URLROOT; ?>/marcas">Marcas</a></li>
                             <li><a class="dropdown-item" href="<?php echo URLROOT; ?>/ubicaciones">Ubicaciones</a></li>
-                            <li><a class="dropdown-item" href="<?php echo URLROOT; ?>/clientes">Clientes</a></li>
                         </ul>
                     </li>
                 </ul>

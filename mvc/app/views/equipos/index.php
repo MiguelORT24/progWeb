@@ -77,6 +77,12 @@
                                    <?php echo !puedeGestionarMaestros() ? 'aria-disabled="true" tabindex="-1"' : ''; ?>>
                                     <i class="bi bi-pencil"></i>
                                 </a>
+                                <button type="button" 
+                                        class="btn btn-sm btn-outline-danger <?php echo !puedeGestionarMaestros() ? 'disabled' : ''; ?>"
+                                        <?php echo !puedeGestionarMaestros() ? 'disabled' : ''; ?>
+                                        onclick="confirmarEliminar(<?php echo $equipo['id_equipo']; ?>, '<?php echo addslashes($equipo['sku']); ?>')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -85,5 +91,18 @@
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+function confirmarEliminar(id, sku) {
+    if (confirm('¿Estás seguro de que deseas eliminar el equipo "' + sku + '"?\n\nADVERTENCIA: Esta acción no se puede deshacer.')) {
+        // Crear formulario dinámico para enviar POST
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '<?php echo URLROOT; ?>/equipos/eliminar/' + id;
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
 
 <?php require_once APPROOT . '/views/layouts/footer.php'; ?>

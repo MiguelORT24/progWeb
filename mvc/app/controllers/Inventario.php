@@ -73,7 +73,7 @@ class Inventario extends Controller {
                 'id_ubicacion' => $_POST['id_ubicacion'],
                 'cantidad' => $_POST['cantidad'],
                 'estado' => $_POST['estado'] ?? 'DISPONIBLE',
-                'fecha_ingreso' => $_POST['fecha_ingreso'] ?? date('Y-m-d')
+                'fecha_ingreso' => $_POST['fecha_ingreso'] ?? date('Y-m-d H:i:s')
             ];
             
             if ($this->loteModel->create($data)) {

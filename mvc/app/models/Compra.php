@@ -22,7 +22,7 @@ class Compra {
                     c.*,
                     p.nombre AS proveedor_nombre
                 FROM compra c
-                INNER JOIN proveedor p ON c.id_proveedor = p.id_proveedor
+                LEFT JOIN proveedor p ON c.id_proveedor = p.id_proveedor
                 ORDER BY c.fecha DESC";
         
         $this->db->query($sql);
@@ -39,7 +39,7 @@ class Compra {
                     p.contacto AS proveedor_contacto,
                     p.telefono AS proveedor_telefono
                 FROM compra c
-                INNER JOIN proveedor p ON c.id_proveedor = p.id_proveedor
+                LEFT JOIN proveedor p ON c.id_proveedor = p.id_proveedor
                 WHERE c.id_compra = :id";
         
         $this->db->query($sql);

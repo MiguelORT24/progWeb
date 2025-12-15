@@ -1,7 +1,7 @@
 <?php
 /**
- * Controlador Ventas
- * Gestiona las ventas a clientes (reduce inventario)
+ * Controlador Salidas
+ * Gestiona las salidas de inventario (reduce stock)
  */
 
 class Ventas extends Controller {
@@ -18,13 +18,13 @@ class Ventas extends Controller {
     }
 
     /**
-     * Vista principal - Listar ventas
+     * Vista principal - Listar salidas
      */
     public function index() {
         $ventas = $this->ventaModel->all();
         
         $data = [
-            'titulo' => 'Gestión de Ventas',
+            'titulo' => 'Gestión de Salidas',
             'ventas' => $ventas
         ];
         
@@ -32,14 +32,14 @@ class Ventas extends Controller {
     }
 
     /**
-     * Crear nueva venta
+     * Crear nueva salida
      */
     public function crear() {
         requerirAuth();
-        requerirPermiso(puedeCrear(), 'No tienes permisos para crear ventas', 'ventas');
+        requerirPermiso(puedeCrear(), 'No tienes permisos para crear salidas', 'ventas');
         
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Validar inventario disponible antes de crear la venta
+            // Validar inventario disponible antes de crear la salida
             $equipos = $_POST['equipos'] ?? [];
             $cantidades = $_POST['cantidades'] ?? [];
             $precios = $_POST['precios'] ?? [];
@@ -74,7 +74,7 @@ class Ventas extends Controller {
                 }
             }
             
-            // Si hay errores, mostrarlos y no crear la venta
+            // Si hay errores, mostrarlos y no crear la salida
             if (!empty($errores)) {
                 $_SESSION['mensaje'] = implode('<br>', $errores);
                 $_SESSION['tipo_mensaje'] = 'warning';
@@ -82,17 +82,16 @@ class Ventas extends Controller {
                 // Redirigir de vuelta al formulario
                 $productos = $this->loteModel->inventarioAgrupado([]);
                 $data = [
-                    'clientes' => $this->clienteModel->all(),
                     'productos' => $productos
                 ];
                 $this->view('ventas/crear', $data);
                 return;
             }
             
-            // Crear venta
+            // Crear salida
             $dataVenta = [
-                'fecha' => $_POST['fecha'] ?? date('Y-m-d'),
-                'id_proveedor' => $_POST['id_cliente'], // Usamos el mismo campo por compatibilidad
+                'fecha' => $_POST['fecha'] ?? date('Y-m-d H:i:s'),
+                'id_proveedor' => null, // No usamos clientes en salidas
                 'total' => 0,
                 'estado' => 'PENDIENTE'
             ];
@@ -131,7 +130,6 @@ class Ventas extends Controller {
         $productos = $this->loteModel->inventarioAgrupado([]);
         
         $data = [
-            'clientes' => $this->clienteModel->all(),
             'productos' => $productos
         ];
         
@@ -139,7 +137,7 @@ class Ventas extends Controller {
     }
 
     /**
-     * Ver detalle de venta
+     * Ver detalle de salida
      */
     public function ver($id) {
         $venta = $this->ventaModel->find($id);
@@ -154,16 +152,16 @@ class Ventas extends Controller {
     }
 
     /**
-     * Confirmar venta y reducir stock
+     * Confirmar salida y reducir stock
      */
     public function confirmar($id) {
         requerirAuth();
-        requerirPermiso(puedeConfirmar(), 'Solo administradores pueden confirmar ventas', 'ventas');
+        requerirPermiso(puedeConfirmar(), 'Solo administradores pueden confirmar salidas', 'ventas');
         
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $usuario_id = $_SESSION['usuario_id'] ?? 1;
             
-            // Obtener detalle de la venta
+            // Obtener detalle de la salida
             $venta = $this->ventaModel->find($id);
             $detalle = $this->ventaModel->obtenerDetalle($id);
             
@@ -171,7 +169,7 @@ class Ventas extends Controller {
             $resultado = $this->loteModel->procesarVenta($detalle, $id, $usuario_id);
             
             if ($resultado['exito']) {
-                $_SESSION['mensaje'] = 'Venta confirmada. Inventario reducido exitosamente';
+                $_SESSION['mensaje'] = 'Salida confirmada. Inventario reducido exitosamente';
                 $_SESSION['tipo_mensaje'] = 'success';
             } else {
                 $_SESSION['mensaje'] = 'Error: ' . $resultado['error'];
@@ -193,17 +191,17 @@ class Ventas extends Controller {
     }
 
     /**
-     * Eliminar venta (solo si está pendiente)
+     * Eliminar salida (solo si está pendiente)
      */
     public function eliminar($id) {
         requerirAuth();
-        requerirPermiso(puedeEliminar(), 'No tienes permisos para eliminar ventas', 'ventas');
+        requerirPermiso(puedeEliminar(), 'No tienes permisos para eliminar salidas', 'ventas');
         
         if ($this->ventaModel->delete($id)) {
-            $_SESSION['mensaje'] = 'Venta eliminada exitosamente';
+            $_SESSION['mensaje'] = 'Salida eliminada exitosamente';
             $_SESSION['tipo_mensaje'] = 'success';
         } else {
-            $_SESSION['mensaje'] = 'No se puede eliminar una venta confirmada';
+            $_SESSION['mensaje'] = 'No se puede eliminar una salida confirmada';
             $_SESSION['tipo_mensaje'] = 'warning';
         }
         
