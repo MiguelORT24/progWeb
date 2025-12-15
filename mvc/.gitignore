@@ -1,0 +1,5 @@
+# Respaldos locales
+database/backups/
+
+# Archivos temporales del SO
+.DS_Store
